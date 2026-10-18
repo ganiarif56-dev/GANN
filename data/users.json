@@ -1,0 +1,20 @@
+[
+  {
+    "id": "usr_super",
+    "username": "superadmin",
+    "name": "Super Admin SD 03",
+    "email": "superadmin@sdsalatiga03.sch.id",
+    "passwordHash": "$2b$10$7bqtE2/m70jCv7s3vUeTqOtzuxpg0SPZKY2HgmoWak0wxrtJbPvHa",
+    "role": "superadmin",
+    "createdAt": "2026-01-01 08:00:00"
+  },
+  {
+    "id": "usr_petugas",
+    "username": "petugas",
+    "name": "Petugas Verifikasi PPDB",
+    "email": "petugas@sdsalatiga03.sch.id",
+    "passwordHash": "$2b$10$7bqtE2/m70jCv7s3vUeTqO3uQBZ7AP3KSBJVw1FJO2brLdlYXj/gO",
+    "role": "admin",
+    "createdAt": "2026-01-01 08:00:00"
+  }
+]

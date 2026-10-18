@@ -1,0 +1,39 @@
+{
+  "nama_sekolah": "SD SALATIGA 03",
+  "slogan": "Cerdas • Berkarakter • Berprestasi",
+  "tahun_ajaran": "2026/2027",
+  "status_pendaftaran": "buka",
+  "jadwal_mulai": "2026-07-01",
+  "jadwal_selesai": "2026-08-31",
+  "kuota_rombel": 2,
+  "kuota_siswa": 56,
+  "biaya": "Gratis",
+  "alamat": "Jl. Margosari No.3, Salatiga",
+  "telepon": "(0298) 322954",
+  "whatsapp": "081234567890",
+  "email": "sdnsalatiga3@gmail.com",
+  "maps_url": "https://maps.google.com/?q=SDN+Salatiga+03+Jl+Margosari+No+3",
+  "google_apps_script_url": "https://script.google.com/macros/s/AKfycbyiVQfMHglgwrYnoYtmQv9KHg4msde3DvcpvhgT992GDsWT9nktCfrY9CdAtB2YaSly/exec",
+  "jadwal_penting": [
+    {
+      "tahap": "Pendaftaran Online",
+      "tanggal": "01 Juli – 31 Agustus 2026",
+      "status": "Sedang Berlangsung"
+    },
+    {
+      "tahap": "Verifikasi Data",
+      "tanggal": "01 – 10 September 2026",
+      "status": "Akan Datang"
+    },
+    {
+      "tahap": "Pengumuman Hasil Seleksi",
+      "tanggal": "15 September 2026",
+      "status": "Akan Datang"
+    },
+    {
+      "tahap": "Daftar Ulang",
+      "tanggal": "20 – 25 September 2026",
+      "status": "Akan Datang"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Status Pendaftaran - SD SALATIGA 03</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0B192C',
+                        brandSurface: '#1E293B',
+                        brandCard: '#152438',
+                        brandAccent: '#F97316',
+                        brandAccentHover: '#EA580C',
+                        brandBorder: '#293C54',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/theme-anim.css">
+    <script src="/js/audio-theme.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B192C;
+            color: #F1F5F9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-brandDark selection:bg-brandAccent selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-brandBorder/60 bg-brandDark/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3.5 group">
+                <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 p-1 flex items-center justify-center shadow-xs">
+                    <img src="/images/logo-sd03.png" alt="Logo SD Salatiga 03" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='/images/logo-sd03.jpg'">
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">
+                        SD SALATIGA 03
+                    </h1>
+                    <p class="text-xs text-brandAccent font-medium">Status Pendaftaran Siswa Baru</p>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4 text-xs font-semibold">
+                <a href="/" class="text-slate-300 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> Beranda
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow py-12 px-4 sm:px-6">
+        <div class="max-w-2xl mx-auto">
+            
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-2xl mb-3">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Cek Status Pendaftaran</h2>
+                <p class="text-slate-400 text-sm mt-1">
+                    Masukkan <strong>Nomor Pendaftaran</strong> (contoh: <code>PMB-SD03-2026-001</code>) atau <strong>NIK Calon Siswa (16 Digit)</strong>.
+                </p>
+            </div>
+
+            <!-- Search Box -->
+            <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 shadow-xl mb-8">
+                <form id="searchForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                            Nomor Pendaftaran / NIK
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="queryInput" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl pl-11 pr-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-brandAccent focus:ring-1 focus:ring-brandAccent text-sm uppercase tracking-wide" placeholder="Contoh: PMB-SD03-2026-001 atau 337401..." required>
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-400"></i>
+                        </div>
+                    </div>
+                    <button type="submit" id="btnSearch" class="w-full py-3.5 px-4 bg-brandAccent hover:bg-brandAccentHover text-white font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-search"></i> Cek Status Sekarang
+                    </button>
+                </form>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorBox" class="hidden mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm flex items-start gap-3">
+                <i class="fa-solid fa-circle-exclamation text-red-400 mt-0.5"></i>
+                <span id="errorMessage">Data tidak ditemukan.</span>
+            </div>
+
+            <!-- Result Card -->
+            <div id="resultCard" class="hidden bg-brandCard border border-brandBorder rounded-2xl p-6 sm:p-7 shadow-2xl animate-in fade-in duration-300">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-brandBorder pb-4 mb-5">
+                    <div>
+                        <span class="text-xs text-slate-400">Nomor Pendaftaran:</span>
+                        <h3 class="text-xl font-black text-brandAccent tracking-wider" id="resNo">PMB-SD03-2026-001</h3>
+                    </div>
+                    <div id="resBadgeStatus" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold border">
+                        Menunggu Verifikasi
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
+                    <div class="bg-brandSurface/60 p-3.5 rounded-xl border border-brandBorder/60">
+                        <span class="text-xs text-slate-400 block mb-1">Nama Calon Siswa</span>
+                        <strong class="text-white text-base" id="resNama">-</strong>
+                    </div>
+                    <div class="bg-brandSurface/60 p-3.5 rounded-xl border border-brandBorder/60">
+                        <span class="text-xs text-slate-400 block mb-1">NIK Calon Siswa (Privasi)</span>
+                        <strong class="text-slate-300" id="resNikMasked">-</strong>
+                    </div>
+                    <div class="bg-brandSurface/60 p-3.5 rounded-xl border border-brandBorder/60">
+                        <span class="text-xs text-slate-400 block mb-1">Jenis Kelamin</span>
+                        <span class="text-slate-300" id="resJK">-</span>
+                    </div>
+                    <div class="bg-brandSurface/60 p-3.5 rounded-xl border border-brandBorder/60">
+                        <span class="text-xs text-slate-400 block mb-1">Asal Sekolah</span>
+                        <span class="text-slate-300" id="resSekolah">-</span>
+                    </div>
+                    <div class="sm:col-span-2 bg-brandSurface/60 p-3.5 rounded-xl border border-brandBorder/60">
+                        <span class="text-xs text-slate-400 block mb-1">Waktu Pendaftaran</span>
+                        <span class="text-slate-300 text-xs" id="resTanggal">-</span>
+                    </div>
+                </div>
+
+                <!-- Catatan Panitia Verifikasi -->
+                <div class="mb-6 p-4 rounded-xl bg-slate-900 border border-brandBorder">
+                    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-comment-dots"></i> Catatan Panitia PPDB:
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed" id="resCatatan">
+                        Pendaftaran berhasil dikirim. Menunggu verifikasi berkas oleh panitia PPDB.
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a id="btnCetak" href="#" class="flex-1 py-3 px-4 bg-brandAccent hover:bg-brandAccentHover text-white font-bold rounded-xl text-xs sm:text-sm transition-all text-center flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i> Cetak Bukti Pendaftaran Resmi
+                    </a>
+                    <a href="/" class="py-3 px-4 bg-brandSurface hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-xs sm:text-sm border border-brandBorder text-center transition-all">
+                        Kembali ke Beranda
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-brandBorder/60 bg-brandDark py-6 text-xs text-slate-400 text-center">
+        &copy; 2026 SD SALATIGA 03 • Sistem PPDB Resmi
+    </footer>
+
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const queryInput = document.getElementById('queryInput');
+        const btnSearch = document.getElementById('btnSearch');
+        const errorBox = document.getElementById('errorBox');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultCard = document.getElementById('resultCard');
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'Valid':
+                case 'Diterima':
+                case 'Terverifikasi':
+                    return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
+                case 'Perlu Dicek':
+                case 'Menunggu Verifikasi':
+                case 'Baru':
+                    return 'bg-amber-500/20 text-amber-400 border-amber-500/40';
+                case 'Perlu Perbaikan':
+                case 'Berkas Perlu Diperbaiki':
+                    return 'bg-rose-500/20 text-rose-400 border-rose-500/40';
+                case 'Belum Dicek':
+                default:
+                    return 'bg-slate-500/20 text-slate-300 border-slate-500/40';
+            }
+        }
+
+        async function doSearch(query) {
+            errorBox.classList.add('hidden');
+            resultCard.classList.add('hidden');
+            btnSearch.disabled = true;
+            btnSearch.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mencari Data...';
+
+            try {
+                const res = await fetch(`/api/public/status?query=${encodeURIComponent(query)}`);
+                const json = await res.json();
+
+                if (!res.ok || !json.success) {
+                    errorMessage.innerText = json.error || 'Data pendaftaran tidak ditemukan.';
+                    errorBox.classList.remove('hidden');
+                    return;
+                }
+
+                const d = json.data;
+                document.getElementById('resNo').innerText = d.no_pendaftaran;
+                document.getElementById('resNama').innerText = d.nama_lengkap;
+                document.getElementById('resNikMasked').innerText = d.nik_masked;
+                document.getElementById('resJK').innerText = d.jenis_kelamin;
+                document.getElementById('resSekolah').innerText = d.sekolah_asal;
+                document.getElementById('resTanggal').innerText = d.tanggal_daftar;
+                document.getElementById('resCatatan').innerText = d.catatan_verifikasi || 'Belum ada catatan.';
+
+                const badge = document.getElementById('resBadgeStatus');
+                badge.innerText = d.status;
+                badge.className = `px-3.5 py-1.5 rounded-full text-xs font-extrabold border ${getStatusBadgeClass(d.status)}`;
+
+                document.getElementById('btnCetak').href = `/bukti/${d.no_pendaftaran}`;
+                resultCard.classList.remove('hidden');
+            } catch (err) {
+                errorMessage.innerText = 'Terjadi gangguan koneksi ke server PPDB.';
+                errorBox.classList.remove('hidden');
+            } finally {
+                btnSearch.disabled = false;
+                btnSearch.innerHTML = '<i class="fa-solid fa-search"></i> Cek Status Sekarang';
+            }
+        }
+
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const q = queryInput.value.trim();
+            if (q) doSearch(q);
+        });
+
+        // If URL has ?q=
+        const urlParams = new URLSearchParams(window.location.search);
+        const qParam = urlParams.get('q');
+        if (qParam) {
+            queryInput.value = qParam;
+            doSearch(qParam);
+        }
+    </script>
+</body>
+</html>

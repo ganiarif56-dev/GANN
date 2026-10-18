@@ -1,0 +1,144 @@
+/**
+ * Theme & Smooth Animation System
+ * SD SALATIGA 03
+ */
+
+:root {
+    --bg-main: #0B192C;
+    --bg-surface: #1E293B;
+    --bg-card: #152438;
+    --bg-input: #0F1D30;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --border-color: #293C54;
+    --brand-accent: #F97316;
+    --brand-accent-hover: #EA580C;
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+html.light-mode {
+    --bg-main: #F8FAFC;
+    --bg-surface: #EDF2F7;
+    --bg-card: #FFFFFF;
+    --bg-input: #FFFFFF;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --border-color: #CBD5E1;
+    --brand-accent: #F97316;
+    --brand-accent-hover: #EA580C;
+    --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+/* Global Smooth Transitions */
+body, header, aside, main, footer, div, card, .bg-brandDark, .bg-brandCard, .bg-brandSurface {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.2s ease;
+}
+
+/* Light mode overrides for existing utility classes */
+html.light-mode body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+}
+
+html.light-mode header,
+html.light-mode aside,
+html.light-mode .bg-brandDark {
+    background-color: var(--bg-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+html.light-mode .bg-brandCard {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--card-shadow) !important;
+}
+
+html.light-mode .bg-brandSurface {
+    background-color: var(--bg-surface) !important;
+    border-color: var(--border-color) !important;
+}
+
+html.light-mode .border-brandBorder {
+    border-color: var(--border-color) !important;
+}
+
+html.light-mode .text-white {
+    color: #0F172A !important;
+}
+
+html.light-mode .text-slate-200,
+html.light-mode .text-slate-300 {
+    color: #334155 !important;
+}
+
+html.light-mode .text-slate-400 {
+    color: #64748B !important;
+}
+
+html.light-mode .text-slate-500 {
+    color: #94A3B8 !important;
+}
+
+html.light-mode input,
+html.light-mode select,
+html.light-mode textarea,
+html.light-mode .form-input,
+html.light-mode .bg-\[\#0F1D30\] {
+    background-color: #FFFFFF !important;
+    border-color: #CBD5E1 !important;
+    color: #0F172A !important;
+}
+
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
+    color: #94A3B8 !important;
+}
+
+/* Smooth Interactive Animations (Animasi Smuts) */
+.btn-smooth {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-smooth:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+.btn-smooth:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.card-smooth {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+}
+.card-smooth:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes smoothFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.anim-fade-up {
+    animation: smoothFadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(249, 115, 22, 0.7);
+    }
+}
+
+.glow-active {
+    animation: pulseGlow 2.5s infinite;
+}

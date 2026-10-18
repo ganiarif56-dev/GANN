@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin PPDB - SD SALATIGA 03</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0B192C',
+                        brandSurface: '#1E293B',
+                        brandCard: '#152438',
+                        brandAccent: '#F97316',
+                        brandAccentHover: '#EA580C',
+                        brandBorder: '#293C54',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/css/theme-anim.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/audio-theme.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B192C;
+            color: #F1F5F9;
+        }
+        .nav-item.active {
+            background-color: rgba(249, 115, 22, 0.15);
+            border-left: 3px solid #F97316;
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+        .form-edit-input {
+            width: 100%;
+            background-color: #0F1D30;
+            border: 1px solid #293C54;
+            border-radius: 0.75rem;
+            padding: 0.55rem 0.85rem;
+            color: #FFFFFF;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .form-edit-input:focus {
+            outline: none;
+            border-color: #F97316;
+            box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex bg-brandDark selection:bg-brandAccent selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-brandCard border-r border-brandBorder flex flex-col shrink-0 transition-all duration-300 z-40 fixed inset-y-0 left-0 lg:static -translate-x-full lg:translate-x-0" id="sidebar">
+        <!-- Brand Header -->
+        <div class="h-20 flex items-center px-6 border-b border-brandBorder gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 p-1 flex items-center justify-center shadow-xs">
+                <img src="/images/logo-sd03.png" alt="Logo SD Salatiga 03" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='/images/logo-sd03.jpg'">
+            </div>
+            <div>
+                <h1 class="font-extrabold text-sm tracking-tight text-white">SD SALATIGA 03</h1>
+                <p class="text-[11px] text-brandAccent font-bold">Admin PPDB 2026/2027</p>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1 py-6 px-3 space-y-1.5 overflow-y-auto">
+            <button onclick="switchView('dashboard')" class="nav-item active w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="dashboard">
+                <i class="fa-solid fa-chart-pie text-sm w-5 text-center text-brandAccent"></i>
+                Dashboard & Statistik
+            </button>
+
+            <button onclick="switchView('pendaftar')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="pendaftar">
+                <i class="fa-solid fa-users text-sm w-5 text-center text-blue-400"></i>
+                Data Pendaftar (34 Kolom)
+            </button>
+
+            <button onclick="switchView('verifikasi')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="verifikasi">
+                <i class="fa-solid fa-clipboard-check text-sm w-5 text-center text-amber-400"></i>
+                Antrean Verifikasi
+                <span class="ml-auto px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40" id="badgeVerifCount">0</span>
+            </button>
+
+            <button onclick="switchView('import')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="import">
+                <i class="fa-solid fa-file-import text-sm w-5 text-center text-cyan-400"></i>
+                Import Data CSV
+            </button>
+
+            <button onclick="switchView('export')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="export">
+                <i class="fa-solid fa-file-export text-sm w-5 text-center text-emerald-400"></i>
+                Export Data CSV
+            </button>
+
+            <button onclick="switchView('backup')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="backup">
+                <i class="fa-solid fa-database text-sm w-5 text-center text-indigo-400"></i>
+                Backup Database
+            </button>
+
+            <button onclick="switchView('audit')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="audit">
+                <i class="fa-solid fa-shield-halved text-sm w-5 text-center text-rose-400"></i>
+                Audit Log & Keamanan
+            </button>
+
+            <button onclick="switchView('settings')" class="nav-item w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-brandSurface/60 transition-colors" data-view="settings">
+                <i class="fa-solid fa-calendar-check text-sm w-5 text-center text-purple-400"></i>
+                Pengaturan & Jadwal
+            </button>
+        </nav>
+
+        <!-- User Profile Card & Logout -->
+        <div class="p-4 border-t border-brandBorder bg-brandSurface/40">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                    <div class="w-8 h-8 rounded-full bg-blue-600/30 border border-blue-500/40 text-blue-300 flex items-center justify-center font-bold text-xs" id="userInitial">
+                        A
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="text-xs font-bold text-white truncate" id="userNameLabel">Admin</div>
+                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-orange-500/20 text-brandAccent font-semibold" id="userRoleBadge">SUPERADMIN</span>
+                    </div>
+                </div>
+                <button onclick="logoutAdmin()" class="text-slate-400 hover:text-red-400 p-1.5 rounded-lg transition-colors" title="Keluar">
+                    <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                </button>
+            </div>
+            <!-- Session Idle Countdown -->
+            <div class="mt-3 pt-2 border-t border-brandBorder/60 flex items-center justify-between text-[10px] text-slate-500">
+                <span>Sesi Aktif:</span>
+                <span id="sessionTimerBadge" class="font-mono text-slate-400">30:00</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- Top Navigation Bar -->
+        <header class="h-20 bg-brandCard border-b border-brandBorder flex items-center justify-between px-4 sm:px-8 shrink-0">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-brandSurface">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div>
+                    <h2 class="text-base sm:text-lg font-black text-white tracking-tight" id="pageTitle">
+                        DASHBOARD PPDB SD SALATIGA 03
+                    </h2>
+                    <p class="text-[11px] text-slate-400">Pengelolaan Data Siswa Baru Tahun Ajaran 2026/2027</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+                <!-- Quick Button to Edit Schedule -->
+                <button type="button" onclick="switchView('settings')" class="px-3 py-2 rounded-xl border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 text-xs font-bold text-purple-300 flex items-center gap-1.5 transition-all" title="Ubah Jadwal Pendaftaran di Beranda">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <span class="hidden md:inline">Atur Jadwal Beranda</span>
+                </button>
+                <!-- Sound Toggle -->
+                <button type="button" onclick="AudioThemeManager.toggleSound()" class="w-9 h-9 rounded-xl border border-brandBorder bg-brandSurface hover:bg-slate-700 flex items-center justify-center text-slate-300" title="Toggle Sound">
+                    <i class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+                <!-- Theme Toggle -->
+                <button type="button" onclick="AudioThemeManager.toggleTheme()" class="w-9 h-9 rounded-xl border border-brandBorder bg-brandSurface hover:bg-slate-700 flex items-center justify-center text-slate-300" title="Toggle Dark/Light Mode">
+                    <i class="fa-solid fa-moon text-xs"></i>
+                </button>
+                <!-- Refresh Button -->
+                <button onclick="refreshData()" class="px-3 py-2 rounded-xl border border-brandBorder bg-brandSurface hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">Segarkan Data</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Body -->
+        <main class="flex-1 p-4 sm:p-8 overflow-y-auto">
+            
+            <!-- VIEW 1: DASHBOARD OVERVIEW -->
+            <section id="view-dashboard" class="space-y-8">
+                
+                <!-- 6 KPI CARDS (Sesuai Permintaan Resmi) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- 1. Total Pendaftar -->
+                    <div class="bg-brandCard border border-brandBorder rounded-2xl p-4 shadow-lg relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Total Pendaftar</span>
+                                <h3 class="text-2xl font-black text-white mt-1" id="statTotal">0</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm border border-blue-500/20">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-[10px] text-slate-400" id="statGenderSub">0 L • 0 P</div>
+                    </div>
+
+                    <!-- 2. Data Valid -->
+                    <div class="bg-brandCard border border-brandBorder rounded-2xl p-4 shadow-lg relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-emerald-400 uppercase">Data Valid</span>
+                                <h3 class="text-2xl font-black text-emerald-400 mt-1" id="statValid">0</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm border border-emerald-500/20">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-[10px] text-slate-400">Lolos verifikasi sah</div>
+                    </div>
+
+                    <!-- 3. Belum Dicek -->
+                    <div class="bg-brandCard border border-brandBorder rounded-2xl p-4 shadow-lg relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-300 uppercase">Belum Dicek</span>
+                                <h3 class="text-2xl font-black text-slate-200 mt-1" id="statBelumDicek">0</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-slate-500/10 text-slate-300 flex items-center justify-center text-sm border border-slate-500/20">
+                                <i class="fa-solid fa-hourglass-start"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-[10px] text-slate-400">Pendaftar baru masuk</div>
+                    </div>
+
+                    <!-- 4. Perlu Dicek -->
+                    <div class="bg-brandCard border border-brandBorder rounded-2xl p-4 shadow-lg relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-amber-400 uppercase">Perlu Dicek</span>
+                                <h3 class="text-2xl font-black text-amber-400 mt-1" id="statPerluDicek">0</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm border border-amber-500/20">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-[10px] text-slate-400">NIK ganda / anomali</div>
+                    </div>
+
+                    <!-- 5. Perlu Perbaikan -->
+                    <div class="bg-brandCard border border-brandBorder rounded-2xl p-4 shadow-lg relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-rose-400 uppercase">Perlu Perbaikan</span>
+                                <h3 class="text-2xl font-black text-rose-400 mt-1" id="statPerluPerbaikan">0</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm border border-rose-500/20">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-[10px] text-slate-400">Berkas kurang lengkap</div>
+                    </div>
+
+                    <!-- 6. Penerima PIP -->
+                    <div class="bg-brandCard border border-brandBorder rounded-2xl p-4 shadow-lg relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold text-purple-400 uppercase">Penerima PIP</span>
+                                <h3 class="text-2xl font-black text-purple-400 mt-1" id="statPIP">0</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm border border-purple-500/20">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-[10px] text-slate-400" id="statNonPIPSub">0 Bukan PIP</div>
+                    </div>
+                </div>
+
+                <!-- 5 DIAGRAM STATISTIK AKTUAL -->
+                <div class="space-y-6">
+                    <!-- Row 1: 3 Doughnut Charts -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <!-- Chart 1: Status Verifikasi -->
+                        <div class="bg-brandCard border border-brandBorder rounded-2xl p-5 shadow-xl">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                        <i class="fa-solid fa-chart-pie text-brandAccent"></i> Status Verifikasi
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400">Proporsi 4 status verifikasi data</p>
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 190px;">
+                                <canvas id="chartStatusVerif"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Jenis Kelamin -->
+                        <div class="bg-brandCard border border-brandBorder rounded-2xl p-5 shadow-xl">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                        <i class="fa-solid fa-venus-mars text-blue-400"></i> Jenis Kelamin
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400">Rasio Laki-laki vs Perempuan</p>
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 190px;">
+                                <canvas id="chartGender"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 3: Penerima PIP -->
+                        <div class="bg-brandCard border border-brandBorder rounded-2xl p-5 shadow-xl">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                        <i class="fa-solid fa-hand-holding-dollar text-purple-400"></i> Bantuan PIP
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400">Proporsi penerima Program Indonesia Pintar</p>
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 190px;">
+                                <canvas id="chartPIP"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: 2 Bar Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <!-- Chart 4: Tren Pendaftaran -->
+                        <div class="bg-brandCard border border-brandBorder rounded-2xl p-5 shadow-xl">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                        <i class="fa-solid fa-chart-column text-brandAccent"></i> Tren Pendaftaran per Minggu
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400">Pergerakan pendaftar 6 minggu terakhir</p>
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 200px;">
+                                <canvas id="chartWeeklyTrend"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 5: Kategori Penghasilan Orang Tua -->
+                        <div class="bg-brandCard border border-brandBorder rounded-2xl p-5 shadow-xl">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                        <i class="fa-solid fa-wallet text-emerald-400"></i> Kategori Penghasilan Orang Tua
+                                    </h4>
+                                    <p class="text-[10px] text-slate-400">Distribusi 5 tingkatan penghasilan ayah/ibu</p>
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 200px;">
+                                <canvas id="chartIncome"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Table Preview -->
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 shadow-xl">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-brandBorder pb-4 mb-5">
+                        <div>
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bell text-brandAccent"></i> Pendaftar Terbaru Masuk
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Daftar pendaftar terkini yang masuk ke sistem.</p>
+                        </div>
+                        <button onclick="switchView('pendaftar')" class="text-xs text-brandAccent hover:underline font-bold">
+                            Buka Semua Data Pendaftar (34 Kolom) &rarr;
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="border-b border-brandBorder text-slate-400 uppercase tracking-wider">
+                                    <th class="py-3 px-3">No. Pendaftaran</th>
+                                    <th class="py-3 px-3">Nama Siswa</th>
+                                    <th class="py-3 px-3">NIK (Privasi)</th>
+                                    <th class="py-3 px-3">PIP</th>
+                                    <th class="py-3 px-3">Status Verifikasi</th>
+                                    <th class="py-3 px-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentStudentsBody" class="divide-y divide-brandBorder/60 text-slate-300">
+                                <tr>
+                                    <td colspan="6" class="py-8 text-center text-slate-500">Memuat data pendaftar...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: DATA PENDAFTAR (34 KOLOM, SEARCH, FILTER, PAGINATION) -->
+            <section id="view-pendaftar" class="hidden space-y-6">
+                <!-- Filters Toolbar -->
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-5 shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                        <!-- Search (Nama, NIK, NISN) -->
+                        <div class="md:col-span-5 relative">
+                            <input type="text" id="filterSearch" oninput="debounceFetch()" placeholder="Cari nama, NIK, NISN, no pendaftaran..." class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brandAccent">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                        </div>
+
+                        <!-- Filter Status Verifikasi -->
+                        <div class="md:col-span-3">
+                            <select id="filterStatus" onchange="fetchStudents()" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brandAccent">
+                                <option value="Semua">-- Semua Status Verifikasi --</option>
+                                <option value="Belum Dicek">Belum Dicek</option>
+                                <option value="Valid">Valid</option>
+                                <option value="Perlu Dicek">Perlu Dicek</option>
+                                <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter PIP -->
+                        <div class="md:col-span-2">
+                            <select id="filterPIP" onchange="fetchStudents()" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brandAccent">
+                                <option value="Semua">-- Semua PIP --</option>
+                                <option value="Ya">Penerima PIP (Ya)</option>
+                                <option value="Tidak">Bukan PIP (Tidak)</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort -->
+                        <div class="md:col-span-2">
+                            <select id="filterSort" onchange="fetchStudents()" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brandAccent">
+                                <option value="newest">Terbaru</option>
+                                <option value="oldest">Terlama</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Data Table Card -->
+                <div class="bg-brandCard border border-brandBorder rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-5 border-b border-brandBorder flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold text-white uppercase tracking-wider">Daftar Calon Siswa Terdaftar</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30" id="dataCountLabel">
+                                0 pendaftar
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="switchView('export')" class="px-3 py-1.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30 text-xs font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-export"></i> Export CSV
+                            </button>
+                            <button onclick="switchView('import')" class="px-3 py-1.5 rounded-xl bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-600/30 text-xs font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-import"></i> Import CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-brandSurface/60 border-b border-brandBorder text-slate-400 uppercase tracking-wider">
+                                    <th class="py-3 px-4">No. Pendaftaran</th>
+                                    <th class="py-3 px-4">Nama Peserta Didik</th>
+                                    <th class="py-3 px-4">NIK (Privasi)</th>
+                                    <th class="py-3 px-4">NISN</th>
+                                    <th class="py-3 px-4">JK</th>
+                                    <th class="py-3 px-4">Penerima PIP</th>
+                                    <th class="py-3 px-4">Status Verifikasi</th>
+                                    <th class="py-3 px-4">No. HP Ortu</th>
+                                    <th class="py-3 px-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody" class="divide-y divide-brandBorder/60 text-slate-300">
+                                <tr>
+                                    <td colspan="9" class="py-12 text-center text-slate-500">Memuat data pendaftar...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="p-4 border-t border-brandBorder flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+                        <div id="paginationInfo">Menampilkan 0 - 0 dari 0 data</div>
+                        <div class="flex items-center gap-1" id="paginationButtons">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: ANTREAN VERIFIKASI -->
+            <section id="view-verifikasi" class="hidden space-y-6">
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 shadow-xl">
+                    <div class="border-b border-brandBorder pb-4 mb-5 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-check text-amber-400"></i> Antrean Butuh Verifikasi
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Daftar pendaftar berstatus 'Belum Dicek', 'Perlu Dicek', atau 'Perlu Perbaikan'.</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="border-b border-brandBorder text-slate-400 uppercase tracking-wider">
+                                    <th class="py-3 px-3">No. Pendaftaran</th>
+                                    <th class="py-3 px-3">Nama Siswa</th>
+                                    <th class="py-3 px-3">Status Saat Ini</th>
+                                    <th class="py-3 px-3">Catatan Panitia</th>
+                                    <th class="py-3 px-3 text-right">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="verifTableBody" class="divide-y divide-brandBorder/60 text-slate-300">
+                                <tr>
+                                    <td colspan="5" class="py-8 text-center text-slate-500">Memuat antrean verifikasi...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 4: IMPORT CSV (PENYEMPURNAAN DENGAN RESOLUSI DUPLIKAT) -->
+            <section id="view-import" class="hidden space-y-6">
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 sm:p-8 shadow-xl max-w-3xl mx-auto">
+                    <div class="border-b border-brandBorder pb-4 mb-6">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-file-import text-cyan-400"></i> Impor Data Calon Siswa (CSV 34 Kolom)
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Sistem secara cerdas mencocokkan header kolom dalam Bahasa Indonesia atau Inggris. Baris bermasalah tetap dapat diimpor dengan penanda <strong>Perlu Dicek</strong> tanpa menggagalkan seluruh file.
+                        </p>
+                    </div>
+
+                    <!-- Step 1: Upload File -->
+                    <div id="importStep1" class="space-y-5">
+                        <div class="border-2 border-dashed border-brandBorder hover:border-brandAccent rounded-2xl p-8 text-center cursor-pointer transition-colors bg-brandSurface/40" onclick="document.getElementById('csvFileInput').click()">
+                            <i class="fa-solid fa-cloud-arrow-up text-4xl text-brandAccent mb-3"></i>
+                            <h4 class="text-sm font-bold text-white mb-1">Pilih File CSV Pendaftar</h4>
+                            <p class="text-xs text-slate-400">Klik di sini atau seret file CSV (maksimal 5 MB)</p>
+                            <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileSelected(this)">
+                        </div>
+
+                        <div id="selectedFileName" class="hidden p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-semibold flex items-center justify-between">
+                            <span>Nama File</span>
+                            <span class="text-slate-400 text-[10px]">Siap Diperiksa</span>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2">
+                            <a href="/api/admin/template-csv" class="text-xs text-brandAccent hover:underline font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Unduh Template CSV 34 Kolom
+                            </a>
+                            <button type="button" id="btnPreviewCSV" onclick="uploadCSVPreview()" disabled class="px-6 py-2.5 rounded-xl bg-brandAccent hover:bg-brandAccentHover disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold text-xs transition-all shadow-md flex items-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass"></i> Periksa & Validasi CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Preview & Duplicate Handling Selection -->
+                    <div id="importStep2" class="hidden space-y-6">
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                            <div class="p-3 bg-brandSurface rounded-xl border border-brandBorder">
+                                <span class="text-[10px] text-slate-400 block uppercase">Total Baris</span>
+                                <strong class="text-lg text-white font-black" id="impTotalRows">0</strong>
+                            </div>
+                            <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
+                                <span class="text-[10px] text-emerald-400 block uppercase">Valid</span>
+                                <strong class="text-lg text-emerald-400 font-black" id="impValidCount">0</strong>
+                            </div>
+                            <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/30">
+                                <span class="text-[10px] text-amber-400 block uppercase">Perlu Dicek</span>
+                                <strong class="text-lg text-amber-400 font-black" id="impFlaggedCount">0</strong>
+                            </div>
+                            <div class="p-3 bg-rose-500/10 rounded-xl border border-rose-500/30">
+                                <span class="text-[10px] text-rose-400 block uppercase">Duplikat NIK</span>
+                                <strong class="text-lg text-rose-400 font-black" id="impDuplicateCount">0</strong>
+                            </div>
+                        </div>
+
+                        <!-- Duplicate Handling Selection -->
+                        <div class="p-4 bg-brandSurface/70 rounded-xl border border-brandBorder space-y-2">
+                            <label class="block text-xs font-bold text-white uppercase">Pilihan Penanganan Data Duplikat / Bermasalah:</label>
+                            <div class="space-y-2 text-xs text-slate-300">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="dupStrategy" value="skip" checked class="w-4 h-4 text-brandAccent">
+                                    <span><strong>Lewati data duplikat</strong> (hanya impor data baru yang belum ada)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="dupStrategy" value="import_flagged" class="w-4 h-4 text-brandAccent">
+                                    <span><strong>Impor semua data</strong> dan beri status <strong>Perlu Dicek</strong> pada data ganda/bermasalah</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="dupStrategy" value="overwrite" class="w-4 h-4 text-brandAccent">
+                                    <span><strong>Perbarui data lama</strong> jika NIK sudah ada di database</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Problematic Rows Report -->
+                        <div id="invalidListContainer" class="hidden p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs max-h-48 overflow-y-auto space-y-2">
+                            <strong class="text-amber-300 block font-bold">Catatan Anomali Baris:</strong>
+                            <ul id="invalidListItems" class="list-disc pl-4 space-y-1 text-[11px] text-amber-200/90 font-mono"></ul>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="button" onclick="resetImport()" class="flex-1 py-2.5 rounded-xl border border-brandBorder bg-brandSurface hover:bg-slate-700 text-slate-200 text-xs font-semibold">
+                                Batal / Pilih File Lain
+                            </button>
+                            <button type="button" id="btnConfirmImport" onclick="confirmImport()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg">
+                                Lanjutkan & Masukkan Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 5: EXPORT CSV (4 PILIHAN LENGKAP) -->
+            <section id="view-export" class="hidden space-y-6">
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto">
+                    <div class="border-b border-brandBorder pb-4 mb-6">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-file-export text-emerald-400"></i> Ekspor Data Pendaftar (CSV 34 Kolom)
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Format standar <strong>UTF-8 with BOM</strong> langsung kompatibel dengan Microsoft Excel dan Google Sheets tanpa merusak angka nol di depan (NIK, NISN, No KK, No HP).
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- 4 Options Card -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button type="button" onclick="downloadAllExport()" class="p-4 rounded-xl border border-brandBorder bg-brandSurface hover:border-brandAccent text-left group transition-all">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-download"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-white">1. Ekspor Seluruh Pendaftar</h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Seluruh 34 kolom data siswa terdaftar.</p>
+                            </button>
+
+                            <button type="button" onclick="downloadFlaggedExport()" class="p-4 rounded-xl border border-brandBorder bg-brandSurface hover:border-brandAccent text-left group transition-all">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-white">2. Ekspor Data Perlu Dicek</h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Khusus pendaftar bertanda 'Perlu Dicek'.</p>
+                            </button>
+
+                            <button type="button" onclick="location.href='/api/admin/template-csv'" class="p-4 rounded-xl border border-brandBorder bg-brandSurface hover:border-brandAccent text-left group transition-all">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-file-csv"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-white">3. Unduh Template CSV Kosong</h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Template 34 kolom + baris contoh.</p>
+                            </button>
+
+                            <button type="button" onclick="document.getElementById('filterExportWrap').classList.toggle('hidden')" class="p-4 rounded-xl border border-brandBorder bg-brandSurface hover:border-brandAccent text-left group transition-all">
+                                <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-filter"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-white">4. Ekspor Berdasarkan Filter</h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Saring status verifikasi, PIP, dan tanggal.</p>
+                            </button>
+                        </div>
+
+                        <!-- Filter Form for Option 4 -->
+                        <div id="filterExportWrap" class="hidden p-4 rounded-xl bg-brandSurface/80 border border-brandBorder space-y-3">
+                            <h5 class="text-xs font-bold text-brandAccent uppercase">Pengaturan Filter Ekspor</h5>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-400 mb-1">Status Verifikasi</label>
+                                    <select id="expStatus" class="w-full bg-[#0F1D30] border border-brandBorder rounded-lg p-2 text-xs text-white">
+                                        <option value="Semua">Semua Status</option>
+                                        <option value="Belum Dicek">Belum Dicek</option>
+                                        <option value="Valid">Valid</option>
+                                        <option value="Perlu Dicek">Perlu Dicek</option>
+                                        <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-400 mb-1">Status PIP</label>
+                                    <select id="expPIP" class="w-full bg-[#0F1D30] border border-brandBorder rounded-lg p-2 text-xs text-white">
+                                        <option value="Semua">Semua PIP</option>
+                                        <option value="Ya">Penerima PIP (Ya)</option>
+                                        <option value="Tidak">Bukan PIP (Tidak)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" onclick="executeFilteredExport()" class="w-full py-2.5 rounded-lg bg-brandAccent hover:bg-brandAccentHover text-white text-xs font-bold">
+                                Unduh CSV Sesuai Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 6: BACKUP DATA -->
+            <section id="view-backup" class="hidden space-y-6">
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto">
+                    <div class="border-b border-brandBorder pb-4 mb-6">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-database text-blue-400"></i> Cadangkan Data PPDB (Backup)
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Unduh arsip lengkap file database <code>pendaftar.csv</code> untuk proteksi dan kontinuitas data.
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-5 mb-6 text-amber-200 text-xs leading-relaxed flex items-start gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400 text-lg mt-0.5 shrink-0"></i>
+                        <div>
+                            <strong class="text-sm font-bold text-amber-300 block mb-1">PERINGATAN KEAMANAN:</strong>
+                            Lakukan backup berkala. File backup berisi data pribadi siswa dan orang tua. Simpan file ini di penyimpanan aman.
+                        </div>
+                    </div>
+
+                    <div class="text-center py-4">
+                        <a href="/api/admin/backup" class="inline-flex items-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg transition-transform hover:scale-105">
+                            <i class="fa-solid fa-download"></i> Unduh File Backup (pendaftar.csv)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CARD: SINKRONISASI CLOUD DATABASE (FIREBASE FIRESTORE & GOOGLE SHEETS) -->
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto space-y-6">
+                    <div class="border-b border-brandBorder pb-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Sinkronisasi Cloud Database
+                            </h3>
+                            <span id="firestoreStatusBadge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                Memeriksa Firestore...
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Sinkronkan seluruh data pendaftar lokal ke <strong>Firebase Cloud Firestore (Project: ppdb-sd-n-salatiga-03)</strong> dan <strong>Google Sheets</strong>.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Firestore Sync Box -->
+                        <div class="p-4 rounded-xl bg-brandSurface/60 border border-brandBorder space-y-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid fa-fire"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">Firebase Firestore</h4>
+                                    <p class="text-[10px] text-slate-400">ppdb-sd-n-salatiga-03</p>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-300 leading-relaxed" id="firestoreStatusText">
+                                Status: Menghubungkan ke Cloud Firestore...
+                            </p>
+                            <button type="button" id="btnSyncFirestore" onclick="triggerFirestoreSync()" class="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs transition-all shadow-md flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-arrows-rotate"></i> Sinkronkan ke Firestore
+                            </button>
+                        </div>
+
+                        <!-- Google Sheets Sync Box -->
+                        <div class="p-4 rounded-xl bg-brandSurface/60 border border-brandBorder space-y-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid fa-table"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">Google Sheets</h4>
+                                    <p class="text-[10px] text-slate-400">Spreadsheet 34 Kolom</p>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-300 leading-relaxed">
+                                Sinkronkan seluruh 34 kolom data ke lembar Google Sheets secara otomatis.
+                            </p>
+                            <button type="button" id="btnSyncSheets" onclick="triggerGoogleSheetsSync()" class="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition-all shadow-md flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-arrows-rotate"></i> Sinkronkan ke Sheets
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 7: AUDIT LOG -->
+            <section id="view-audit" class="hidden space-y-6">
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 shadow-xl">
+                    <div class="border-b border-brandBorder pb-4 mb-5 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-rose-400"></i> Log Aktivitas Admin & Keamanan
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Catatan seluruh aktivitas login, perubahan data, impor, dan ekspor.</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="border-b border-brandBorder text-slate-400 uppercase tracking-wider">
+                                    <th class="py-3 px-3">Waktu</th>
+                                    <th class="py-3 px-3">Admin</th>
+                                    <th class="py-3 px-3">Aktivitas</th>
+                                    <th class="py-3 px-3">Rincian Data</th>
+                                    <th class="py-3 px-3">IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTableBody" class="divide-y divide-brandBorder/60 text-slate-300">
+                                <tr>
+                                    <td colspan="5" class="py-8 text-center text-slate-500">Memuat log aktivitas...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 8: PENGATURAN & JADWAL -->
+            <section id="view-settings" class="hidden space-y-6">
+                <div class="bg-brandCard border border-brandBorder rounded-2xl p-6 sm:p-8 shadow-xl max-w-3xl mx-auto">
+                    <div class="border-b border-brandBorder pb-4 mb-6">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-check text-purple-400"></i> Pengaturan Sistem & Jadwal Pendaftaran
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Ubah jadwal tanggal penting yang tampil di halaman beranda, kuota siswa, tahun ajaran, dan status buka/tutup pendaftaran.</p>
+                    </div>
+
+                    <form id="settingsForm" class="space-y-6 text-xs">
+                        <!-- Bagian 1: Informasi Umum -->
+                        <div class="p-4 rounded-xl bg-brandSurface/60 border border-brandBorder space-y-4">
+                            <h4 class="font-bold text-brandAccent uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-school"></i> 1. Pengaturan Umum PPDB
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block font-bold text-slate-300 uppercase mb-1">Nama Sekolah</label>
+                                    <input type="text" id="setNamaSekolah" class="form-edit-input" required>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-300 uppercase mb-1">Tahun Ajaran</label>
+                                    <input type="text" id="setTahunAjaran" class="form-edit-input" value="2026/2027" required>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-300 uppercase mb-1">Status Pendaftaran</label>
+                                    <select id="setStatusPendaftaran" class="form-edit-input">
+                                        <option value="buka">Buka (Menerima Pendaftar)</option>
+                                        <option value="tutup">Tutup (Pendaftaran Ditutup)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-300 uppercase mb-1">Kuota Siswa Baru</label>
+                                    <input type="number" id="setKuotaSiswa" class="form-edit-input" min="1" value="56" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bagian 2: Jadwal Penting Beranda -->
+                        <div class="p-4 rounded-xl bg-brandSurface/60 border border-brandBorder space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fa-regular fa-calendar-days"></i> 2. Jadwal Penting (Tampil di Beranda Website)
+                                </h4>
+                                <span class="text-[10px] text-slate-400">Otomatis memperbarui tampilan Beranda</span>
+                            </div>
+
+                            <!-- Tahap 1 -->
+                            <div class="p-3 rounded-xl bg-[#0B192C]/70 border border-brandBorder/80 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                                <div class="sm:col-span-4">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nama Tahap 1</label>
+                                    <input type="text" id="jdw_tahap_1" class="form-edit-input" value="Pendaftaran Online" required>
+                                </div>
+                                <div class="sm:col-span-5">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tanggal / Rentang Waktu</label>
+                                    <input type="text" id="jdw_tanggal_1" class="form-edit-input" placeholder="Contoh: 01 Juli – 31 Agustus 2026" required>
+                                </div>
+                                <div class="sm:col-span-3">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Status Tahap</label>
+                                    <select id="jdw_status_1" class="form-edit-input">
+                                        <option value="Sedang Berlangsung">Sedang Berlangsung</option>
+                                        <option value="Akan Datang">Akan Datang</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tahap 2 -->
+                            <div class="p-3 rounded-xl bg-[#0B192C]/70 border border-brandBorder/80 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                                <div class="sm:col-span-4">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nama Tahap 2</label>
+                                    <input type="text" id="jdw_tahap_2" class="form-edit-input" value="Verifikasi Data" required>
+                                </div>
+                                <div class="sm:col-span-5">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tanggal / Rentang Waktu</label>
+                                    <input type="text" id="jdw_tanggal_2" class="form-edit-input" placeholder="Contoh: 01 – 10 September 2026" required>
+                                </div>
+                                <div class="sm:col-span-3">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Status Tahap</label>
+                                    <select id="jdw_status_2" class="form-edit-input">
+                                        <option value="Sedang Berlangsung">Sedang Berlangsung</option>
+                                        <option value="Akan Datang">Akan Datang</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tahap 3 -->
+                            <div class="p-3 rounded-xl bg-[#0B192C]/70 border border-brandBorder/80 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                                <div class="sm:col-span-4">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nama Tahap 3</label>
+                                    <input type="text" id="jdw_tahap_3" class="form-edit-input" value="Pengumuman Hasil Seleksi" required>
+                                </div>
+                                <div class="sm:col-span-5">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tanggal / Rentang Waktu</label>
+                                    <input type="text" id="jdw_tanggal_3" class="form-edit-input" placeholder="Contoh: 15 September 2026" required>
+                                </div>
+                                <div class="sm:col-span-3">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Status Tahap</label>
+                                    <select id="jdw_status_3" class="form-edit-input">
+                                        <option value="Sedang Berlangsung">Sedang Berlangsung</option>
+                                        <option value="Akan Datang">Akan Datang</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tahap 4 -->
+                            <div class="p-3 rounded-xl bg-[#0B192C]/70 border border-brandBorder/80 grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                                <div class="sm:col-span-4">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nama Tahap 4</label>
+                                    <input type="text" id="jdw_tahap_4" class="form-edit-input" value="Daftar Ulang" required>
+                                </div>
+                                <div class="sm:col-span-5">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tanggal / Rentang Waktu</label>
+                                    <input type="text" id="jdw_tanggal_4" class="form-edit-input" placeholder="Contoh: 20 – 25 September 2026" required>
+                                </div>
+                                <div class="sm:col-span-3">
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Status Tahap</label>
+                                    <select id="jdw_status_4" class="form-edit-input">
+                                        <option value="Sedang Berlangsung">Sedang Berlangsung</option>
+                                        <option value="Akan Datang">Akan Datang</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" id="btnSaveSettings" class="w-full py-3.5 px-4 bg-brandAccent hover:bg-brandAccentHover text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan & Jadwal Beranda
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL 1: DETAIL LENGKAP 34 KOLOM (UNMASKED) -->
+    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-brandCard border border-brandBorder rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-brandBorder flex items-center justify-between bg-brandSurface/60">
+                <div>
+                    <span class="text-xs text-brandAccent font-bold font-mono" id="modNoPendaftaran">PMB-SD03-2026-001</span>
+                    <h3 class="text-lg font-black text-white" id="modNamaLengkap">Nama Peserta Didik</h3>
+                </div>
+                <button onclick="closeModal('detailModal')" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto space-y-5 text-xs" id="detailModalBody"></div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-brandBorder flex justify-between items-center bg-brandSurface/40">
+                <a id="btnModalPrintBukti" href="#" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center gap-1.5 text-xs">
+                    <i class="fa-solid fa-print"></i> Cetak Lembar Bukti
+                </a>
+                <button onclick="closeModal('detailModal')" class="px-4 py-2 bg-brandBorder hover:bg-slate-700 text-slate-200 rounded-xl font-semibold text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: EDIT DATA LENGKAP 34 KOLOM -->
+    <div id="editModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-brandCard border border-brandBorder rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-5 border-b border-brandBorder flex items-center justify-between bg-brandSurface/60">
+                <div>
+                    <span class="text-xs text-brandAccent font-bold font-mono" id="editModNo">PMB-SD03-2026-001</span>
+                    <h3 class="text-base font-black text-white">Edit Data Pendaftar (34 Kolom)</h3>
+                </div>
+                <button onclick="closeModal('editModal')" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="editForm" class="p-6 overflow-y-auto space-y-6 text-xs flex-1">
+                <!-- Data Siswa -->
+                <div class="p-4 bg-brandSurface/60 rounded-xl border border-brandBorder space-y-3">
+                    <h4 class="font-bold text-brandAccent uppercase">I. Identitas Calon Siswa</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Lengkap</label>
+                            <input type="text" id="ed_nama_lengkap" class="form-edit-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">NIK Siswa (16 Digit)</label>
+                            <input type="text" id="ed_nik" class="form-edit-input" maxlength="16" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">NISN</label>
+                            <input type="text" id="ed_nisn" class="form-edit-input" maxlength="10">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Jenis Kelamin</label>
+                            <select id="ed_jenis_kelamin" class="form-edit-input">
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Tempat Lahir</label>
+                            <input type="text" id="ed_tempat_lahir" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Tanggal Lahir</label>
+                            <input type="date" id="ed_tanggal_lahir" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Anak Ke-</label>
+                            <input type="number" id="ed_anak_ke" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">No. KK (16 Digit)</label>
+                            <input type="text" id="ed_no_kk" class="form-edit-input" maxlength="16">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Tinggi Badan (cm)</label>
+                            <input type="number" id="ed_tinggi_badan" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Berat Badan (kg)</label>
+                            <input type="number" id="ed_berat_badan" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Hobi</label>
+                            <input type="text" id="ed_hobi" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Cita-Cita</label>
+                            <input type="text" id="ed_cita_cita" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">No HP Siswa</label>
+                            <input type="text" id="ed_no_hp_siswa" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Email Siswa</label>
+                            <input type="email" id="ed_email_siswa" class="form-edit-input">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Alamat Rumah</label>
+                            <textarea id="ed_alamat" rows="2" class="form-edit-input"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Orang Tua & Penghasilan -->
+                <div class="p-4 bg-brandSurface/60 rounded-xl border border-brandBorder space-y-3">
+                    <h4 class="font-bold text-brandAccent uppercase">II. Data Orang Tua & Penghasilan</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Ayah</label>
+                            <input type="text" id="ed_nama_ayah" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">NIK Ayah</label>
+                            <input type="text" id="ed_nik_ayah" class="form-edit-input" maxlength="16">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Pendidikan Ayah</label>
+                            <input type="text" id="ed_pendidikan_ayah" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Pekerjaan Ayah</label>
+                            <input type="text" id="ed_pekerjaan_ayah" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Penghasilan Ayah</label>
+                            <select id="ed_penghasilan_ayah" class="form-edit-input" onchange="toggleEditKetGaji('ayah')">
+                                <option value="Di bawah Rp500.000">Di bawah Rp500.000</option>
+                                <option value="Rp500.000–Rp1.000.000">Rp500.000–Rp1.000.000</option>
+                                <option value="Rp1.000.001–Rp2.000.000">Rp1.000.001–Rp2.000.000</option>
+                                <option value="Rp2.000.001–Rp5.000.000">Rp2.000.001–Rp5.000.000</option>
+                                <option value="Di atas Rp5.000.000">Di atas Rp5.000.000</option>
+                            </select>
+                        </div>
+                        <div id="wrapEdKetAyah">
+                            <label class="block text-[11px] font-bold text-amber-300 mb-1">Keterangan Penghasilan Ayah</label>
+                            <input type="text" id="ed_ket_ayah" class="form-edit-input">
+                        </div>
+
+                        <div class="pt-2 border-t border-brandBorder/40 md:col-span-2"></div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Ibu</label>
+                            <input type="text" id="ed_nama_ibu" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">NIK Ibu</label>
+                            <input type="text" id="ed_nik_ibu" class="form-edit-input" maxlength="16">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Pendidikan Ibu</label>
+                            <input type="text" id="ed_pendidikan_ibu" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Pekerjaan Ibu</label>
+                            <input type="text" id="ed_pekerjaan_ibu" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Penghasilan Ibu</label>
+                            <select id="ed_penghasilan_ibu" class="form-edit-input" onchange="toggleEditKetGaji('ibu')">
+                                <option value="Di bawah Rp500.000">Di bawah Rp500.000</option>
+                                <option value="Rp500.000–Rp1.000.000">Rp500.000–Rp1.000.000</option>
+                                <option value="Rp1.000.001–Rp2.000.000">Rp1.000.001–Rp2.000.000</option>
+                                <option value="Rp2.000.001–Rp5.000.000">Rp2.000.001–Rp5.000.000</option>
+                                <option value="Di atas Rp5.000.000">Di atas Rp5.000.000</option>
+                            </select>
+                        </div>
+                        <div id="wrapEdKetIbu">
+                            <label class="block text-[11px] font-bold text-amber-300 mb-1">Keterangan Penghasilan Ibu</label>
+                            <input type="text" id="ed_ket_ibu" class="form-edit-input">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">No. HP Orang Tua</label>
+                            <input type="text" id="ed_no_hp_orang_tua" class="form-edit-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Email Orang Tua</label>
+                            <input type="email" id="ed_email_orang_tua" class="form-edit-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekolah, PIP & Status Verifikasi -->
+                <div class="p-4 bg-brandSurface/60 rounded-xl border border-brandBorder space-y-3">
+                    <h4 class="font-bold text-brandAccent uppercase">III. Sekolah Asal, PIP & Verifikasi</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Sekolah Asal</label>
+                            <input type="text" id="ed_sekolah_asal" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Tahun Lulus</label>
+                            <input type="text" id="ed_tahun_lulus" class="form-edit-input">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Penerima PIP</label>
+                            <select id="ed_penerima_pip" class="form-edit-input">
+                                <option value="Tidak">Tidak</option>
+                                <option value="Ya">Ya</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Status Verifikasi Data</label>
+                            <select id="ed_status_verifikasi" class="form-edit-input">
+                                <option value="Belum Dicek">Belum Dicek</option>
+                                <option value="Valid">Valid</option>
+                                <option value="Perlu Dicek">Perlu Dicek</option>
+                                <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1">Catatan Panitia Verifikasi</label>
+                            <textarea id="ed_catatan_verifikasi" rows="2" class="form-edit-input"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('editModal')" class="flex-1 py-2.5 bg-brandBorder hover:bg-slate-700 text-slate-300 rounded-xl font-semibold">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSaveEdit" class="flex-1 py-2.5 bg-brandAccent hover:bg-brandAccentHover text-white rounded-xl font-bold shadow-md">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: QUICK VERIFICATION STATUS MODAL -->
+    <div id="verifModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-brandCard border border-brandBorder rounded-3xl max-w-md w-full p-6 shadow-2xl animate-in fade-in duration-200">
+            <h3 class="text-base font-bold text-white mb-1">Ubah Status Verifikasi Data</h3>
+            <p class="text-xs text-brandAccent font-mono mb-4" id="vmodNo">PMB-SD03-2026-001</p>
+
+            <form id="verifForm" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-300 uppercase mb-1">Status Verifikasi Baru</label>
+                    <select id="vmodStatus" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl p-2.5 text-white">
+                        <option value="Belum Dicek">Belum Dicek</option>
+                        <option value="Valid">Valid</option>
+                        <option value="Perlu Dicek">Perlu Dicek</option>
+                        <option value="Perlu Perbaikan">Perlu Perbaikan</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="font-bold text-slate-300 uppercase">Catatan Panitia</label>
+                        <span class="text-[10px] text-slate-400">Tampil di Cek Status</span>
+                    </div>
+                    <textarea id="vmodNotes" rows="3" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl p-2.5 text-white" placeholder="Catatan verifikasi data..."></textarea>
+                </div>
+
+                <div class="text-[11px] text-slate-400 space-y-1">
+                    <span class="block text-[10px] font-bold uppercase text-slate-500">Template Cepat:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" onclick="setVerifNote('Berkas fisik lengkap dan data valid.')" class="px-2 py-1 rounded bg-brandSurface hover:bg-slate-700 text-slate-300 text-[10px]">Valid Sah</button>
+                        <button type="button" onclick="setVerifNote('NIK terdeteksi ganda, mohon verifikasi fisik Kartu Keluarga.')" class="px-2 py-1 rounded bg-brandSurface hover:bg-slate-700 text-slate-300 text-[10px]">NIK Ganda</button>
+                        <button type="button" onclick="setVerifNote('Mohon lengkapi fotokopi Akta Kelahiran dan KK.')" class="px-2 py-1 rounded bg-brandSurface hover:bg-slate-700 text-slate-300 text-[10px]">Perlu Perbaikan</button>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeModal('verifModal')" class="flex-1 py-2.5 bg-brandBorder hover:bg-slate-700 text-slate-300 rounded-xl font-semibold">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSaveVerif" class="flex-1 py-2.5 bg-brandAccent hover:bg-brandAccentHover text-white rounded-xl font-bold">
+                        Simpan Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT APPLICATION LOGIC -->
+    <script>
+        let currentUser = null;
+        let studentsData = [];
+        let selectedFileForImport = null;
+        let currentPage = 1;
+        let itemsPerPage = 10;
+
+        // Chart instances
+        let chartStatusVerifInstance = null;
+        let chartGenderInstance = null;
+        let chartPIPInstance = null;
+        let chartWeeklyTrendInstance = null;
+        let chartIncomeInstance = null;
+
+        // Escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Toast Helper
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            let bg = 'bg-brandCard border-brandBorder text-white';
+            let icon = 'fa-circle-info text-blue-400';
+
+            if (type === 'success') {
+                bg = 'bg-emerald-950 border-emerald-500/40 text-emerald-200';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bg = 'bg-rose-950 border-rose-500/40 text-rose-200';
+                icon = 'fa-triangle-exclamation text-rose-400';
+            }
+
+            toast.className = `p-3.5 rounded-xl border shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-in fade-in slide-in-from-top-4 duration-300 pointer-events-auto ${bg}`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Initialize Admin
+        async function initAdmin() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (!res.ok) {
+                    window.location.href = '/admin/login';
+                    return;
+                }
+                const data = await res.json();
+                currentUser = data.user;
+
+                document.getElementById('userNameLabel').innerText = currentUser.name || currentUser.username;
+                document.getElementById('userInitial').innerText = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+                document.getElementById('userRoleBadge').innerText = currentUser.role.toUpperCase();
+
+                startSessionTimer(30 * 60);
+                await refreshData();
+            } catch (e) {
+                window.location.href = '/admin/login';
+            }
+        }
+
+        async function refreshData() {
+            await Promise.all([
+                fetchStats(),
+                fetchStudents(),
+                fetchAuditLogs(),
+                fetchSettings(),
+                checkFirestoreStatus()
+            ]);
+        }
+
+        // Fetch Stats & Render Charts
+        async function fetchStats() {
+            try {
+                const res = await fetch('/api/admin/stats');
+                const json = await res.json();
+                if (json.success) {
+                    const d = json.data;
+                    document.getElementById('statTotal').innerText = d.total_pendaftar;
+                    document.getElementById('statValid').innerText = d.valid;
+                    document.getElementById('statBelumDicek').innerText = d.belum_dicek;
+                    document.getElementById('statPerluDicek').innerText = d.perlu_dicek;
+                    document.getElementById('statPerluPerbaikan').innerText = d.perlu_perbaikan;
+                    document.getElementById('statPIP').innerText = d.penerima_pip;
+
+                    document.getElementById('statGenderSub').innerText = `${d.gender.laki_laki} L • ${d.gender.perempuan} P`;
+                    document.getElementById('statNonPIPSub').innerText = `${d.bukan_penerima_pip} Bukan PIP`;
+                    document.getElementById('badgeVerifCount').innerText = d.belum_dicek + d.perlu_dicek + d.perlu_perbaikan;
+
+                    renderCharts(d);
+                }
+            } catch (e) { console.error('Stats error:', e); }
+        }
+
+        // Render 5 Charts with actual database data
+        function renderCharts(d) {
+            // 1. Status Verifikasi Doughnut
+            const sv = d.status_verifikasi_chart || { labels: [], data: [] };
+            const ctxSV = document.getElementById('chartStatusVerif');
+            if (ctxSV) {
+                if (chartStatusVerifInstance) chartStatusVerifInstance.destroy();
+                chartStatusVerifInstance = new Chart(ctxSV, {
+                    type: 'doughnut',
+                    data: {
+                        labels: sv.labels,
+                        datasets: [{
+                            data: sv.data,
+                            backgroundColor: [
+                                'rgba(148, 163, 184, 0.8)', // Belum Dicek (Abu-abu)
+                                'rgba(16, 185, 129, 0.8)',  // Valid (Hijau)
+                                'rgba(245, 158, 11, 0.8)',  // Perlu Dicek (Oranye)
+                                'rgba(239, 68, 68, 0.8)'    // Perlu Perbaikan (Merah)
+                            ],
+                            borderWidth: 1,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { position: 'right', labels: { color: '#CBD5E1', font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Gender Doughnut
+            const gc = d.gender_chart || { labels: [], data: [] };
+            const ctxGender = document.getElementById('chartGender');
+            if (ctxGender) {
+                if (chartGenderInstance) chartGenderInstance.destroy();
+                chartGenderInstance = new Chart(ctxGender, {
+                    type: 'doughnut',
+                    data: {
+                        labels: gc.labels,
+                        datasets: [{
+                            data: gc.data,
+                            backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(244, 63, 94, 0.8)'],
+                            borderWidth: 1,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { position: 'right', labels: { color: '#CBD5E1', font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // 3. PIP Doughnut
+            const pc = d.pip_chart || { labels: [], data: [] };
+            const ctxPIP = document.getElementById('chartPIP');
+            if (ctxPIP) {
+                if (chartPIPInstance) chartPIPInstance.destroy();
+                chartPIPInstance = new Chart(ctxPIP, {
+                    type: 'doughnut',
+                    data: {
+                        labels: pc.labels,
+                        datasets: [{
+                            data: pc.data,
+                            backgroundColor: ['rgba(168, 85, 247, 0.8)', 'rgba(71, 85, 105, 0.8)'],
+                            borderWidth: 1,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { position: 'right', labels: { color: '#CBD5E1', font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // 4. Weekly Trend Bar
+            const wt = d.weekly_trend || { labels: [], data: [] };
+            const ctxWT = document.getElementById('chartWeeklyTrend');
+            if (ctxWT) {
+                if (chartWeeklyTrendInstance) chartWeeklyTrendInstance.destroy();
+                chartWeeklyTrendInstance = new Chart(ctxWT, {
+                    type: 'bar',
+                    data: {
+                        labels: wt.labels,
+                        datasets: [{
+                            label: 'Pendaftar',
+                            data: wt.data,
+                            backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#94A3B8', font: { size: 10 } }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: '#94A3B8', font: { size: 10 }, stepSize: 1 } }
+                        }
+                    }
+                });
+            }
+
+            // 5. Income Distribution Bar
+            const ic = d.income_chart || { labels: [], data: [] };
+            const ctxIncome = document.getElementById('chartIncome');
+            if (ctxIncome) {
+                if (chartIncomeInstance) chartIncomeInstance.destroy();
+                chartIncomeInstance = new Chart(ctxIncome, {
+                    type: 'bar',
+                    data: {
+                        labels: ['< 500rb', '500rb–1jt', '1jt–2jt', '2jt–5jt', '> 5jt'],
+                        datasets: [{
+                            label: 'Keluarga',
+                            data: ic.data,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { ticks: { color: '#94A3B8', font: { size: 10 } }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: '#94A3B8', font: { size: 10 }, stepSize: 1 } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Fetch Students with Search, Status, PIP, Pagination
+        async function fetchStudents() {
+            try {
+                const search = document.getElementById('filterSearch').value;
+                const status = document.getElementById('filterStatus').value;
+                const pip = document.getElementById('filterPIP').value;
+                const sort = document.getElementById('filterSort').value;
+
+                const params = new URLSearchParams();
+                if (search) params.append('search', search);
+                if (status) params.append('status', status);
+                if (pip) params.append('pip', pip);
+                if (sort) params.append('sort', sort);
+                params.append('page', currentPage);
+                params.append('limit', itemsPerPage);
+
+                const res = await fetch(`/api/admin/pendaftar?${params.toString()}`);
+                const json = await res.json();
+                if (json.success) {
+                    studentsData = json.data;
+                    document.getElementById('dataCountLabel').innerText = `${json.count} pendaftar`;
+                    renderStudentsTable(studentsData);
+                    renderRecentTable(studentsData.slice(0, 5));
+                    renderVerifQueue(studentsData.filter(s => s.status_verifikasi !== 'Valid'));
+                    renderPagination(json);
+                }
+            } catch (e) { console.error('Students error:', e); }
+        }
+
+        // Status Verification Badges (Sesuai Ketentuan Warna Resmi)
+        function getVerificationBadge(st) {
+            let color = 'bg-slate-500/20 text-slate-300 border-slate-500/40'; // Belum Dicek: Abu-abu
+            if (st === 'Valid') color = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'; // Valid: Hijau
+            else if (st === 'Perlu Dicek') color = 'bg-amber-500/20 text-amber-400 border-amber-500/40'; // Perlu Dicek: Oranye
+            else if (st === 'Perlu Perbaikan') color = 'bg-rose-500/20 text-rose-400 border-rose-500/40'; // Perlu Perbaikan: Merah
+            return `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${color}">${st || 'Belum Dicek'}</span>`;
+        }
+
+        function getPIPBadge(pip) {
+            if (pip === 'Ya') {
+                return '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">Ya</span>';
+            }
+            return '<span class="px-2 py-0.5 rounded-full text-[10px] font-medium text-slate-400">Tidak</span>';
+        }
+
+        function renderStudentsTable(list) {
+            const tbody = document.getElementById('studentsTableBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="py-12 text-center text-slate-500">Tidak ada data siswa yang cocok dengan filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(s => `
+                <tr class="hover:bg-brandSurface/40 transition-colors">
+                    <td class="py-3 px-4 font-mono font-bold text-brandAccent">${s.no_pendaftaran}</td>
+                    <td class="py-3 px-4 font-semibold text-white">${escapeHtml(s.nama_lengkap)}</td>
+                    <td class="py-3 px-4 font-mono text-slate-400">${s.nik_masked}</td>
+                    <td class="py-3 px-4 text-slate-400">${s.nisn || '-'}</td>
+                    <td class="py-3 px-4">${s.jenis_kelamin === 'Laki-laki' ? 'L' : 'P'}</td>
+                    <td class="py-3 px-4">${getPIPBadge(s.penerima_pip)}</td>
+                    <td class="py-3 px-4">${getVerificationBadge(s.status_verifikasi)}</td>
+                    <td class="py-3 px-4 font-mono text-slate-400">${s.no_hp_masked}</td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="openDetail('${s.no_pendaftaran}')" class="p-1.5 rounded-lg bg-blue-600/20 text-blue-400 hover:bg-blue-600/30" title="Detail Lengkap 34 Kolom">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button onclick="openEditModal('${s.no_pendaftaran}')" class="p-1.5 rounded-lg bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30" title="Edit Data 34 Kolom">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="openVerif('${s.no_pendaftaran}', '${s.status_verifikasi}', '${escapeHtml(s.catatan_verifikasi || '')}')" class="p-1.5 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30" title="Ubah Status Verifikasi">
+                                <i class="fa-solid fa-check-double"></i>
+                            </button>
+                            ${currentUser && currentUser.role === 'superadmin' ? `
+                                <button onclick="deleteStudent('${s.no_pendaftaran}')" class="p-1.5 rounded-lg text-slate-500 hover:text-red-400" title="Hapus Permanen">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderRecentTable(list) {
+            const tbody = document.getElementById('recentStudentsBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500">Belum ada pendaftar.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(s => `
+                <tr class="hover:bg-brandSurface/40">
+                    <td class="py-2.5 px-3 font-mono font-bold text-brandAccent">${s.no_pendaftaran}</td>
+                    <td class="py-2.5 px-3 font-semibold text-white">${escapeHtml(s.nama_lengkap)}</td>
+                    <td class="py-2.5 px-3 font-mono text-slate-400">${s.nik_masked}</td>
+                    <td class="py-2.5 px-3">${getPIPBadge(s.penerima_pip)}</td>
+                    <td class="py-2.5 px-3">${getVerificationBadge(s.status_verifikasi)}</td>
+                    <td class="py-2.5 px-3 text-right">
+                        <button onclick="openDetail('${s.no_pendaftaran}')" class="text-xs text-blue-400 hover:underline">Detail &rarr;</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderVerifQueue(list) {
+            const tbody = document.getElementById('verifTableBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500">Semua pendaftar telah terverifikasi valid!</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(s => `
+                <tr class="hover:bg-brandSurface/40">
+                    <td class="py-3 px-3 font-mono font-bold text-brandAccent">${s.no_pendaftaran}</td>
+                    <td class="py-3 px-3 font-bold text-white">${escapeHtml(s.nama_lengkap)}</td>
+                    <td class="py-3 px-3">${getVerificationBadge(s.status_verifikasi)}</td>
+                    <td class="py-3 px-3 text-slate-300 italic text-[11px]">${escapeHtml(s.catatan_verifikasi || '-')}</td>
+                    <td class="py-3 px-3 text-right">
+                        <button onclick="openVerif('${s.no_pendaftaran}', '${s.status_verifikasi}', '${escapeHtml(s.catatan_verifikasi || '')}')" class="px-3 py-1 bg-brandAccent hover:bg-brandAccentHover text-white rounded-lg font-bold text-[11px]">
+                            Verifikasi &rarr;
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Pagination Renderer
+        function renderPagination(meta) {
+            const info = document.getElementById('paginationInfo');
+            const btns = document.getElementById('paginationButtons');
+
+            const start = meta.count === 0 ? 0 : (meta.page - 1) * meta.limit + 1;
+            const end = Math.min(meta.page * meta.limit, meta.count);
+            info.innerText = `Menampilkan ${start} - ${end} dari ${meta.count} data`;
+
+            let html = '';
+            if (meta.page > 1) {
+                html += `<button onclick="changePage(${meta.page - 1})" class="px-2.5 py-1 rounded-lg border border-brandBorder bg-brandSurface hover:bg-slate-700 text-xs">Prev</button>`;
+            }
+            for (let p = 1; p <= meta.totalPages; p++) {
+                if (p === meta.page) {
+                    html += `<span class="px-2.5 py-1 rounded-lg bg-brandAccent text-white font-bold text-xs">${p}</span>`;
+                } else if (p <= 5 || p === meta.totalPages || Math.abs(p - meta.page) <= 1) {
+                    html += `<button onclick="changePage(${p})" class="px-2.5 py-1 rounded-lg border border-brandBorder bg-brandSurface hover:bg-slate-700 text-xs">${p}</button>`;
+                }
+            }
+            if (meta.page < meta.totalPages) {
+                html += `<button onclick="changePage(${meta.page + 1})" class="px-2.5 py-1 rounded-lg border border-brandBorder bg-brandSurface hover:bg-slate-700 text-xs">Next</button>`;
+            }
+            btns.innerHTML = html;
+        }
+
+        function changePage(p) {
+            currentPage = p;
+            fetchStudents();
+        }
+
+        // View Switcher
+        function switchView(viewName) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) target.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('data-view') === viewName) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            const titles = {
+                dashboard: 'DASHBOARD & STATISTIK PPDB',
+                pendaftar: 'DATA PENDAFTAR SISWA (34 KOLOM)',
+                verifikasi: 'ANTEAN VERIFIKASI BERKAS',
+                import: 'IMPORT CSV PENDAFTAR',
+                export: 'EXPORT DATA CSV RESMI',
+                backup: 'CADANGKAN DATABASE (BACKUP)',
+                audit: 'AUDIT LOG & KEAMANAN',
+                settings: 'PENGATURAN PPDB'
+            };
+            document.getElementById('pageTitle').innerText = titles[viewName] || 'ADMIN SD SALATIGA 03';
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        let debounceTimer;
+        function debounceFetch() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                currentPage = 1;
+                fetchStudents();
+            }, 300);
+        }
+
+        // Open Full Detail Modal (Unmasked 34 Columns)
+        async function openDetail(noPendaftaran) {
+            try {
+                const res = await fetch(`/api/admin/pendaftar/${noPendaftaran}`);
+                const json = await res.json();
+                if (!json.success) return alert(json.error);
+
+                const d = json.data;
+                document.getElementById('modNoPendaftaran').innerText = d.no_pendaftaran;
+                document.getElementById('modNamaLengkap').innerText = d.nama_lengkap;
+                document.getElementById('btnModalPrintBukti').href = `/bukti/${d.no_pendaftaran}`;
+
+                const body = document.getElementById('detailModalBody');
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <!-- I. Data Calon Siswa -->
+                        <div class="bg-brandSurface/80 p-4 rounded-xl border border-brandBorder">
+                            <h4 class="font-bold text-brandAccent uppercase mb-2 border-b border-brandBorder/60 pb-1">I. Identitas Calon Siswa</h4>
+                            <div class="grid grid-cols-2 gap-2 text-slate-300">
+                                <div><strong class="text-slate-400">NIK Asli:</strong> ${escapeHtml(d.nik)}</div>
+                                <div><strong class="text-slate-400">NISN:</strong> ${escapeHtml(d.nisn || '-')}</div>
+                                <div><strong class="text-slate-400">Jenis Kelamin:</strong> ${d.jenis_kelamin}</div>
+                                <div><strong class="text-slate-400">TTL:</strong> ${escapeHtml(d.tempat_lahir)}, ${d.tanggal_lahir}</div>
+                                <div><strong class="text-slate-400">Anak Ke-:</strong> ${d.anak_ke}</div>
+                                <div><strong class="text-slate-400">Fisik (TB / BB):</strong> ${d.tinggi_badan ? d.tinggi_badan + ' cm' : '-'} / ${d.berat_badan ? d.berat_badan + ' kg' : '-'}</div>
+                                <div><strong class="text-slate-400">Hobi / Cita-Cita:</strong> ${escapeHtml(d.hobi || '-')} / ${escapeHtml(d.cita_cita || '-')}</div>
+                                <div><strong class="text-slate-400">No. HP / Email Siswa:</strong> ${escapeHtml(d.no_hp_siswa || '-')} / ${escapeHtml(d.email_siswa || '-')}</div>
+                                <div><strong class="text-slate-400">No. Kartu Keluarga:</strong> ${escapeHtml(d.no_kk)}</div>
+                                <div class="col-span-2"><strong class="text-slate-400">Alamat Rumah:</strong> ${escapeHtml(d.alamat)}</div>
+                            </div>
+                        </div>
+
+                        <!-- II. Data Orang Tua & Penghasilan -->
+                        <div class="bg-brandSurface/80 p-4 rounded-xl border border-brandBorder">
+                            <h4 class="font-bold text-brandAccent uppercase mb-2 border-b border-brandBorder/60 pb-1">II. Data Orang Tua & Penghasilan</h4>
+                            <div class="grid grid-cols-2 gap-2 text-slate-300">
+                                <div><strong class="text-slate-400">Nama Ayah:</strong> ${escapeHtml(d.nama_ayah || '-')}</div>
+                                <div><strong class="text-slate-400">NIK Ayah:</strong> ${escapeHtml(d.nik_ayah || '-')}</div>
+                                <div><strong class="text-slate-400">Pendidikan / Kerja Ayah:</strong> ${escapeHtml(d.pendidikan_ayah || '-')} / ${escapeHtml(d.pekerjaan_ayah || '-')}</div>
+                                <div><strong class="text-slate-400">Gaji Ayah:</strong> <span class="text-emerald-400 font-bold">${escapeHtml(d.penghasilan_ayah || '-')}</span></div>
+                                ${d.keterangan_penghasilan_ayah ? `<div class="col-span-2 text-amber-300"><strong class="text-slate-400">Keterangan Gaji Ayah:</strong> ${escapeHtml(d.keterangan_penghasilan_ayah)}</div>` : ''}
+
+                                <div class="pt-2 border-t border-brandBorder/40 col-span-2"></div>
+
+                                <div><strong class="text-slate-400">Nama Ibu:</strong> ${escapeHtml(d.nama_ibu || '-')}</div>
+                                <div><strong class="text-slate-400">NIK Ibu:</strong> ${escapeHtml(d.nik_ibu || '-')}</div>
+                                <div><strong class="text-slate-400">Pendidikan / Kerja Ibu:</strong> ${escapeHtml(d.pendidikan_ibu || '-')} / ${escapeHtml(d.pekerjaan_ibu || '-')}</div>
+                                <div><strong class="text-slate-400">Gaji Ibu:</strong> <span class="text-emerald-400 font-bold">${escapeHtml(d.penghasilan_ibu || '-')}</span></div>
+                                ${d.keterangan_penghasilan_ibu ? `<div class="col-span-2 text-amber-300"><strong class="text-slate-400">Keterangan Gaji Ibu:</strong> ${escapeHtml(d.keterangan_penghasilan_ibu)}</div>` : ''}
+
+                                <div class="pt-2 border-t border-brandBorder/40 col-span-2"></div>
+
+                                <div><strong class="text-slate-400">No. HP Orang Tua:</strong> <span class="text-brandAccent font-bold">${escapeHtml(d.no_hp_orang_tua || '-')}</span></div>
+                                <div><strong class="text-slate-400">Email Orang Tua:</strong> ${escapeHtml(d.email_orang_tua || '-')}</div>
+                            </div>
+                        </div>
+
+                        <!-- III. Sekolah Asal, PIP & Status Verifikasi -->
+                        <div class="bg-brandSurface/80 p-4 rounded-xl border border-brandBorder">
+                            <h4 class="font-bold text-brandAccent uppercase mb-2 border-b border-brandBorder/60 pb-1">III. Sekolah Asal & Program PIP</h4>
+                            <div class="grid grid-cols-2 gap-2 text-slate-300">
+                                <div><strong class="text-slate-400">Sekolah Asal:</strong> ${escapeHtml(d.sekolah_asal || '-')}</div>
+                                <div><strong class="text-slate-400">Tahun Lulus:</strong> ${escapeHtml(d.tahun_lulus || '-')}</div>
+                                <div><strong class="text-slate-400">Penerima PIP:</strong> <span class="${d.penerima_pip === 'Ya' ? 'text-emerald-400 font-bold' : ''}">${d.penerima_pip || 'Tidak'}</span></div>
+                                <div><strong class="text-slate-400">Waktu Pendaftaran:</strong> ${d.tanggal_daftar}</div>
+                            </div>
+                        </div>
+
+                        <!-- IV. Verifikasi -->
+                        <div class="bg-slate-900 p-4 rounded-xl border border-brandBorder">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-slate-400 font-semibold">Status Verifikasi Data:</span>
+                                ${getVerificationBadge(d.status_verifikasi)}
+                            </div>
+                            <div class="text-slate-300">
+                                <strong class="text-amber-400">Catatan Panitia:</strong> ${escapeHtml(d.catatan_verifikasi || '-')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('detailModal').classList.remove('hidden');
+            } catch (e) {
+                alert('Gagal memuat detail data.');
+            }
+        }
+
+        // Open Edit Modal (Full 34 Columns Editable)
+        let currentEditNo = '';
+        async function openEditModal(noPendaftaran) {
+            try {
+                const res = await fetch(`/api/admin/pendaftar/${noPendaftaran}`);
+                const json = await res.json();
+                if (!json.success) return alert(json.error);
+
+                const d = json.data;
+                currentEditNo = d.no_pendaftaran;
+                document.getElementById('editModNo').innerText = d.no_pendaftaran;
+
+                // Set field values
+                document.getElementById('ed_nama_lengkap').value = d.nama_lengkap || '';
+                document.getElementById('ed_nik').value = d.nik || '';
+                document.getElementById('ed_nisn').value = d.nisn || '';
+                document.getElementById('ed_jenis_kelamin').value = d.jenis_kelamin || 'Laki-laki';
+                document.getElementById('ed_tempat_lahir').value = d.tempat_lahir || '';
+                document.getElementById('ed_tanggal_lahir').value = d.tanggal_lahir || '';
+                document.getElementById('ed_anak_ke').value = d.anak_ke || '1';
+                document.getElementById('ed_no_kk').value = d.no_kk || '';
+                document.getElementById('ed_tinggi_badan').value = d.tinggi_badan || '';
+                document.getElementById('ed_berat_badan').value = d.berat_badan || '';
+                document.getElementById('ed_hobi').value = d.hobi || '';
+                document.getElementById('ed_cita_cita').value = d.cita_cita || '';
+                document.getElementById('ed_no_hp_siswa').value = d.no_hp_siswa || '';
+                document.getElementById('ed_email_siswa').value = d.email_siswa || '';
+                document.getElementById('ed_alamat').value = d.alamat || '';
+
+                document.getElementById('ed_nama_ayah').value = d.nama_ayah || '';
+                document.getElementById('ed_nik_ayah').value = d.nik_ayah || '';
+                document.getElementById('ed_pendidikan_ayah').value = d.pendidikan_ayah || '';
+                document.getElementById('ed_pekerjaan_ayah').value = d.pekerjaan_ayah || '';
+                document.getElementById('ed_penghasilan_ayah').value = d.penghasilan_ayah || 'Rp1.000.001–Rp2.000.000';
+                document.getElementById('ed_ket_ayah').value = d.keterangan_penghasilan_ayah || '';
+
+                document.getElementById('ed_nama_ibu').value = d.nama_ibu || '';
+                document.getElementById('ed_nik_ibu').value = d.nik_ibu || '';
+                document.getElementById('ed_pendidikan_ibu').value = d.pendidikan_ibu || '';
+                document.getElementById('ed_pekerjaan_ibu').value = d.pekerjaan_ibu || '';
+                document.getElementById('ed_penghasilan_ibu').value = d.penghasilan_ibu || 'Di bawah Rp500.000';
+                document.getElementById('ed_ket_ibu').value = d.keterangan_penghasilan_ibu || '';
+
+                document.getElementById('ed_no_hp_orang_tua').value = d.no_hp_orang_tua || '';
+                document.getElementById('ed_email_orang_tua').value = d.email_orang_tua || '';
+
+                document.getElementById('ed_sekolah_asal').value = d.sekolah_asal || '';
+                document.getElementById('ed_tahun_lulus').value = d.tahun_lulus || '2026';
+                document.getElementById('ed_penerima_pip').value = d.penerima_pip || 'Tidak';
+                document.getElementById('ed_status_verifikasi').value = d.status_verifikasi || 'Belum Dicek';
+                document.getElementById('ed_catatan_verifikasi').value = d.catatan_verifikasi || '';
+
+                toggleEditKetGaji('ayah');
+                toggleEditKetGaji('ibu');
+
+                document.getElementById('editModal').classList.remove('hidden');
+            } catch (e) {
+                alert('Gagal memuat formulir edit data.');
+            }
+        }
+
+        function toggleEditKetGaji(parent) {
+            if (parent === 'ayah') {
+                const val = document.getElementById('ed_penghasilan_ayah').value;
+                const wrap = document.getElementById('wrapEdKetAyah');
+                if (val === 'Di bawah Rp500.000' || val === 'Di atas Rp5.000.000') wrap.classList.remove('hidden');
+                else wrap.classList.add('hidden');
+            } else if (parent === 'ibu') {
+                const val = document.getElementById('ed_penghasilan_ibu').value;
+                const wrap = document.getElementById('wrapEdKetIbu');
+                if (val === 'Di bawah Rp500.000' || val === 'Di atas Rp5.000.000') wrap.classList.remove('hidden');
+                else wrap.classList.add('hidden');
+            }
+        }
+
+        // Submit Edit Form
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveEdit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...';
+
+            const payload = {
+                nama_lengkap: document.getElementById('ed_nama_lengkap').value.trim(),
+                nik: document.getElementById('ed_nik').value.trim(),
+                nisn: document.getElementById('ed_nisn').value.trim(),
+                jenis_kelamin: document.getElementById('ed_jenis_kelamin').value,
+                tempat_lahir: document.getElementById('ed_tempat_lahir').value.trim(),
+                tanggal_lahir: document.getElementById('ed_tanggal_lahir').value,
+                anak_ke: document.getElementById('ed_anak_ke').value,
+                no_kk: document.getElementById('ed_no_kk').value.trim(),
+                tinggi_badan: document.getElementById('ed_tinggi_badan').value,
+                berat_badan: document.getElementById('ed_berat_badan').value,
+                hobi: document.getElementById('ed_hobi').value.trim(),
+                cita_cita: document.getElementById('ed_cita_cita').value.trim(),
+                no_hp_siswa: document.getElementById('ed_no_hp_siswa').value.trim(),
+                email_siswa: document.getElementById('ed_email_siswa').value.trim(),
+                alamat: document.getElementById('ed_alamat').value.trim(),
+
+                nama_ayah: document.getElementById('ed_nama_ayah').value.trim(),
+                nik_ayah: document.getElementById('ed_nik_ayah').value.trim(),
+                pendidikan_ayah: document.getElementById('ed_pendidikan_ayah').value.trim(),
+                pekerjaan_ayah: document.getElementById('ed_pekerjaan_ayah').value.trim(),
+                penghasilan_ayah: document.getElementById('ed_penghasilan_ayah').value,
+                keterangan_penghasilan_ayah: document.getElementById('ed_ket_ayah').value.trim(),
+
+                nama_ibu: document.getElementById('ed_nama_ibu').value.trim(),
+                nik_ibu: document.getElementById('ed_nik_ibu').value.trim(),
+                pendidikan_ibu: document.getElementById('ed_pendidikan_ibu').value.trim(),
+                pekerjaan_ibu: document.getElementById('ed_pekerjaan_ibu').value.trim(),
+                penghasilan_ibu: document.getElementById('ed_penghasilan_ibu').value,
+                keterangan_penghasilan_ibu: document.getElementById('ed_ket_ibu').value.trim(),
+
+                no_hp_orang_tua: document.getElementById('ed_no_hp_orang_tua').value.trim(),
+                email_orang_tua: document.getElementById('ed_email_orang_tua').value.trim(),
+
+                sekolah_asal: document.getElementById('ed_sekolah_asal').value.trim(),
+                tahun_lulus: document.getElementById('ed_tahun_lulus').value.trim(),
+                penerima_pip: document.getElementById('ed_penerima_pip').value,
+                status_verifikasi: document.getElementById('ed_status_verifikasi').value,
+                catatan_verifikasi: document.getElementById('ed_catatan_verifikasi').value.trim()
+            };
+
+            try {
+                const res = await fetch(`/api/admin/pendaftar/${currentEditNo}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+                if (json.success) {
+                    closeModal('editModal');
+                    showToast('Data berhasil diperbarui!', 'success');
+                    await refreshData();
+                } else {
+                    alert(json.error || 'Gagal menyimpan perubahan.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan jaringan saat menyimpan data.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Simpan Perubahan';
+            }
+        });
+
+        // Quick Verification Modal
+        let currentVerifNo = '';
+        function openVerif(noPendaftaran, currentStatus, currentNotes) {
+            currentVerifNo = noPendaftaran;
+            document.getElementById('vmodNo').innerText = noPendaftaran;
+            document.getElementById('vmodStatus').value = currentStatus || 'Belum Dicek';
+            document.getElementById('vmodNotes').value = currentNotes || '';
+            document.getElementById('verifModal').classList.remove('hidden');
+        }
+
+        function setVerifNote(text) {
+            document.getElementById('vmodNotes').value = text;
+        }
+
+        document.getElementById('verifForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveVerif');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...';
+
+            try {
+                const res = await fetch(`/api/admin/pendaftar/${currentVerifNo}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status_verifikasi: document.getElementById('vmodStatus').value,
+                        catatan_verifikasi: document.getElementById('vmodNotes').value.trim()
+                    })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    closeModal('verifModal');
+                    showToast('Status verifikasi berhasil diubah!', 'success');
+                    await refreshData();
+                } else {
+                    alert(json.error || 'Gagal mengubah status verifikasi.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan jaringan.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Simpan Status';
+            }
+        });
+
+        // Delete Student (Super Admin only with confirmation)
+        async function deleteStudent(noPendaftaran) {
+            if (!confirm(`PERINGATAN: Apakah Anda yakin ingin menghapus data ${noPendaftaran} secara permanen dari sistem?`)) {
+                return;
+            }
+            try {
+                const res = await fetch(`/api/admin/pendaftar/${noPendaftaran}`, { method: 'DELETE' });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    await refreshData();
+                } else {
+                    alert(json.error || 'Gagal menghapus data.');
+                }
+            } catch (e) {
+                alert('Terjadi kesalahan saat menghapus data.');
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // CSV Import Logic
+        function handleFileSelected(input) {
+            if (input.files && input.files[0]) {
+                selectedFileForImport = input.files[0];
+                const fn = document.getElementById('selectedFileName');
+                fn.innerText = `File Terpilih: ${selectedFileForImport.name} (${Math.round(selectedFileForImport.size / 1024)} KB)`;
+                fn.classList.remove('hidden');
+                document.getElementById('btnPreviewCSV').disabled = false;
+            }
+        }
+
+        function resetImport() {
+            selectedFileForImport = null;
+            document.getElementById('csvFileInput').value = '';
+            document.getElementById('selectedFileName').classList.add('hidden');
+            document.getElementById('btnPreviewCSV').disabled = true;
+            document.getElementById('importStep1').classList.remove('hidden');
+            document.getElementById('importStep2').classList.add('hidden');
+        }
+
+        async function uploadCSVPreview() {
+            if (!selectedFileForImport) return;
+            const btn = document.getElementById('btnPreviewCSV');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memeriksa Struktur File...';
+
+            const formData = new FormData();
+            formData.append('csvFile', selectedFileForImport);
+
+            try {
+                const res = await fetch('/api/admin/import/preview', {
+                    method: 'POST',
+                    body: formData
+                });
+                const json = await res.json();
+
+                if (!json.success) {
+                    alert(json.error || 'File CSV tidak valid.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Periksa & Validasi CSV';
+                    return;
+                }
+
+                document.getElementById('impTotalRows').innerText = json.summary.totalRows;
+                document.getElementById('impValidCount').innerText = json.summary.validCount;
+                document.getElementById('impFlaggedCount').innerText = json.summary.flaggedCount;
+                document.getElementById('impDuplicateCount').innerText = json.summary.duplicateCount;
+
+                const allIssues = [...(json.flaggedRows || []), ...(json.duplicateRows || [])];
+                if (allIssues.length > 0) {
+                    const ul = document.getElementById('invalidListItems');
+                    ul.innerHTML = allIssues.map(r => `
+                        <li>Baris ${r.row} (${escapeHtml(r.nama)}): ${r.issues.join('; ')}</li>
+                    `).join('');
+                    document.getElementById('invalidListContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('invalidListContainer').classList.add('hidden');
+                }
+
+                document.getElementById('importStep1').classList.add('hidden');
+                document.getElementById('importStep2').classList.remove('hidden');
+            } catch (err) {
+                alert('Terjadi kesalahan saat memeriksa file CSV.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Periksa & Validasi CSV';
+            }
+        }
+
+        async function confirmImport() {
+            if (!selectedFileForImport) return;
+            const btn = document.getElementById('btnConfirmImport');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengimpor Data...';
+
+            const dupStrategy = document.querySelector('input[name="dupStrategy"]:checked').value;
+            const formData = new FormData();
+            formData.append('csvFile', selectedFileForImport);
+            formData.append('duplicateStrategy', dupStrategy);
+
+            try {
+                const res = await fetch('/api/admin/import/confirm', {
+                    method: 'POST',
+                    body: formData
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    resetImport();
+                    switchView('pendaftar');
+                    await refreshData();
+                } else {
+                    alert(json.error || 'Gagal mengimpor data.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan jaringan saat mengimpor data.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Lanjutkan & Masukkan Data';
+            }
+        }
+
+        // Export Actions
+        function downloadAllExport() {
+            window.location.href = '/api/admin/export';
+        }
+
+        function downloadFlaggedExport() {
+            window.location.href = '/api/admin/export?filter=perlu_dicek';
+        }
+
+        function executeFilteredExport() {
+            const st = document.getElementById('expStatus').value;
+            const pip = document.getElementById('expPIP').value;
+            const params = new URLSearchParams();
+            if (st && st !== 'Semua') params.append('status', st);
+            if (pip && pip !== 'Semua') params.append('pip', pip);
+            window.location.href = `/api/admin/export?${params.toString()}`;
+        }
+
+        // Check Firestore Connection Status
+        async function checkFirestoreStatus() {
+            try {
+                const res = await fetch('/api/admin/firestore-status');
+                const json = await res.json();
+                const badge = document.getElementById('firestoreStatusBadge');
+                const text = document.getElementById('firestoreStatusText');
+                if (!badge || !text) return;
+
+                if (json.success && json.data.connected) {
+                    badge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+                    badge.innerText = 'Firestore Terhubung';
+                    text.innerText = `Terhubung aktif ke project: ${json.data.projectId}. Total ${json.data.totalPendaftarInFirestore} data di cloud.`;
+                } else {
+                    badge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+                    badge.innerText = 'Menunggu Key JSON';
+                    text.innerText = 'File serviceAccountKey.json belum ada di folder data/. Ikuti panduan untuk menghubungkan.';
+                }
+            } catch (e) {
+                console.error('Firestore status check error:', e);
+            }
+        }
+
+        // Trigger Sync to Firestore
+        async function triggerFirestoreSync() {
+            const btn = document.getElementById('btnSyncFirestore');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyinkronkan...';
+
+            try {
+                const res = await fetch('/api/admin/sync-firestore', { method: 'POST' });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    await checkFirestoreStatus();
+                } else {
+                    alert(json.error || 'Gagal menyinkronkan ke Firestore.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan saat sinkronisasi ke Firestore: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Sinkronkan ke Firestore';
+            }
+        }
+
+        // Trigger Sync to Google Sheets
+        async function triggerGoogleSheetsSync() {
+            const btn = document.getElementById('btnSyncSheets');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyinkronkan...';
+
+            try {
+                const res = await fetch('/api/admin/sync-sheets', { method: 'POST' });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                } else {
+                    alert(json.error || 'Gagal menyinkronkan ke Google Sheets.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan saat sinkronisasi ke Google Sheets: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Sinkronkan ke Sheets';
+            }
+        }
+
+        // Fetch Audit Logs
+        async function fetchAuditLogs() {
+            try {
+                const res = await fetch('/api/admin/audit-logs');
+                const json = await res.json();
+                if (json.success) {
+                    const tbody = document.getElementById('auditTableBody');
+                    if (json.data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">Belum ada catatan log aktivitas.</td></tr>`;
+                        return;
+                    }
+                    tbody.innerHTML = json.data.map(l => `
+                        <tr class="hover:bg-brandSurface/40">
+                            <td class="py-2.5 px-3 font-mono text-[11px] text-slate-400">${l.waktu}</td>
+                            <td class="py-2.5 px-3 font-bold text-white">${escapeHtml(l.admin)}</td>
+                            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-brandSurface text-slate-300 font-semibold text-[10px]">${l.aktivitas}</span></td>
+                            <td class="py-2.5 px-3 text-slate-300">${escapeHtml(l.data)}</td>
+                            <td class="py-2.5 px-3 font-mono text-[11px] text-slate-400">${l.ip}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) { console.error('Audit log error:', e); }
+        }
+
+        // Settings & Jadwal Penting
+        async function fetchSettings() {
+            try {
+                const res = await fetch('/api/public/settings');
+                const json = await res.json();
+                if (json.success) {
+                    const s = json.data;
+                    document.getElementById('setNamaSekolah').value = s.nama_sekolah || '';
+                    document.getElementById('setTahunAjaran').value = s.tahun_ajaran || '';
+                    document.getElementById('setStatusPendaftaran').value = s.status_pendaftaran || 'buka';
+                    document.getElementById('setKuotaSiswa').value = s.kuota_siswa || 56;
+
+                    const defaultJadwal = [
+                        { tahap: 'Pendaftaran Online', tanggal: '01 Juli – 31 Agustus 2026', status: 'Sedang Berlangsung' },
+                        { tahap: 'Verifikasi Data', tanggal: '01 – 10 September 2026', status: 'Akan Datang' },
+                        { tahap: 'Pengumuman Hasil Seleksi', tanggal: '15 September 2026', status: 'Akan Datang' },
+                        { tahap: 'Daftar Ulang', tanggal: '20 – 25 September 2026', status: 'Akan Datang' }
+                    ];
+                    const jadwal = (Array.isArray(s.jadwal_penting) && s.jadwal_penting.length > 0)
+                        ? s.jadwal_penting
+                        : defaultJadwal;
+
+                    for (let i = 0; i < 4; i++) {
+                        const item = jadwal[i] || defaultJadwal[i];
+                        const idx = i + 1;
+                        const elTahap = document.getElementById(`jdw_tahap_${idx}`);
+                        const elTanggal = document.getElementById(`jdw_tanggal_${idx}`);
+                        const elStatus = document.getElementById(`jdw_status_${idx}`);
+                        if (elTahap) elTahap.value = item.tahap || defaultJadwal[i].tahap;
+                        if (elTanggal) elTanggal.value = item.tanggal || defaultJadwal[i].tanggal;
+                        if (elStatus) elStatus.value = item.status || defaultJadwal[i].status;
+                    }
+                }
+            } catch (e) { console.error('Settings fetch error:', e); }
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveSettings');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...';
+
+            const jadwalPenting = [];
+            for (let idx = 1; idx <= 4; idx++) {
+                jadwalPenting.push({
+                    tahap: document.getElementById(`jdw_tahap_${idx}`).value.trim(),
+                    tanggal: document.getElementById(`jdw_tanggal_${idx}`).value.trim(),
+                    status: document.getElementById(`jdw_status_${idx}`).value
+                });
+            }
+
+            try {
+                const res = await fetch('/api/admin/settings', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nama_sekolah: document.getElementById('setNamaSekolah').value.trim(),
+                        tahun_ajaran: document.getElementById('setTahunAjaran').value.trim(),
+                        status_pendaftaran: document.getElementById('setStatusPendaftaran').value,
+                        kuota_siswa: parseInt(document.getElementById('setKuotaSiswa').value, 10),
+                        jadwal_penting: jadwalPenting
+                    })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('Pengaturan & Jadwal Beranda berhasil disimpan!', 'success');
+                    await refreshData();
+                } else {
+                    alert(json.error || 'Gagal menyimpan pengaturan.');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan saat menyimpan pengaturan.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan & Jadwal Beranda';
+            }
+        });
+
+        // Logout
+        async function logoutAdmin() {
+            if (!confirm('Apakah Anda yakin ingin keluar dari sistem admin?')) return;
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/admin/login';
+            } catch (e) {
+                window.location.href = '/admin/login';
+            }
+        }
+
+        // Idle Session Countdown
+        function startSessionTimer(totalSeconds) {
+            let remain = totalSeconds;
+            const badge = document.getElementById('sessionTimerBadge');
+            setInterval(() => {
+                if (remain <= 0) {
+                    window.location.href = '/admin/login';
+                    return;
+                }
+                remain--;
+                const m = String(Math.floor(remain / 60)).padStart(2, '0');
+                const s = String(remain % 60).padStart(2, '0');
+                badge.innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', initAdmin);
+    </script>
+</body>
+</html>

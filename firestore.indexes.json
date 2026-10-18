@@ -1,0 +1,29 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "pendaftar",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status_verifikasi", "order": "ASCENDING" },
+        { "fieldPath": "tanggal_daftar", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pendaftar",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "penerima_pip", "order": "ASCENDING" },
+        { "fieldPath": "tanggal_daftar", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pendaftar",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "jenis_kelamin", "order": "ASCENDING" },
+        { "fieldPath": "tanggal_daftar", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

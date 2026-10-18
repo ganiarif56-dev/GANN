@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ========================================================
+    // HELPER FUNCTIONS & VALIDATORS
+    // ========================================================
+
+    // Cek apakah user adalah admin terautentikasi Firebase Auth
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Cek apakah status pendaftaran sedang dibuka oleh sekolah
+    function isRegistrationOpen() {
+      return !exists(/databases/$(database)/documents/settings/general) ||
+             get(/databases/$(database)/documents/settings/general).data.status_pendaftaran == 'buka';
+    }
+
+    // Validasi format string dasar
+    function isNonEmptyString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    // Validasi NIK 16 digit angka
+    function isValidNIK(nik) {
+      return nik is string && nik.size() == 16 && nik.matches('^[0-9]{16}$');
+    }
+
+    // Validasi data pendaftar baru
+    function isValidStudentSubmission(data) {
+      return data.keys().hasAll([
+        'no_pendaftaran',
+        'nama_lengkap',
+        'nik',
+        'jenis_kelamin',
+        'alamat',
+        'status_verifikasi'
+      ]) &&
+      data.status_verifikasi == 'Belum Dicek' && // Mencegah pemalsuan status verifikasi awal
+      isNonEmptyString(data.nama_lengkap, 2, 100) &&
+      isValidNIK(data.nik) &&
+      (data.jenis_kelamin == 'Laki-laki' || data.jenis_kelamin == 'Perempuan');
+    }
+
+    // ========================================================
+    // 1. KOLEKSI: settings (Pengaturan Sekolah & Jadwal Beranda)
+    // ========================================================
+    match /settings/{docId} {
+      // Publik diizinkan membaca dokumen 'general' (nama sekolah, tahun ajaran, jadwal beranda)
+      allow read: if docId == 'general';
+      // Penulisan hanya melalui Backend Admin SDK (bypassed) atau Admin Terautentikasi
+      allow write: if false;
+    }
+
+    // ========================================================
+    // 2. KOLEKSI: pendaftar (Data 34 Kolom Siswa Baru)
+    // ========================================================
+    match /pendaftar/{noPendaftaran} {
+      // Create: Publik boleh mengirim pendaftaran jika status pendaftaran sedang 'buka'
+      // dan data valid sesuai schema (status_verifikasi harus 'Belum Dicek')
+      allow create: if isRegistrationOpen() && isValidStudentSubmission(request.resource.data);
+
+      // Read: Hanya diizinkan bagi admin terautentikasi (mencegah scraping data pribadi NIK/KK publik)
+      // Akses publik cek status dilayani secara aman melalui backend dengan masking NIK
+      allow read: if isAuthenticated();
+
+      // Update & Delete: Ditolak untuk klien tanpa otorisasi (dikelola oleh Backend Admin SDK)
+      allow update, delete: if false;
+    }
+
+    // ========================================================
+    // 3. KOLEKSI: audit_logs (Catatan Keamanan & Aktivitas)
+    // ========================================================
+    match /audit_logs/{logId} {
+      // Terkunci penuh dari sisi klien (Hanya ditulis dan dibaca via Admin SDK)
+      allow read, write: if false;
+    }
+
+    // ========================================================
+    // DEFAULT: Kunci seluruh path lainnya
+    // ========================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

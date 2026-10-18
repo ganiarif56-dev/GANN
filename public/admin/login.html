@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - SD SALATIGA 03</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0B192C',
+                        brandSurface: '#1E293B',
+                        brandCard: '#152438',
+                        brandAccent: '#F97316',
+                        brandAccentHover: '#EA580C',
+                        brandBorder: '#293C54',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B192C;
+            color: #F1F5F9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-brandDark relative overflow-hidden">
+
+    <!-- Ambient background light -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-md w-full relative z-10">
+        
+        <!-- Brand Header -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-600/30 border border-blue-500/40 text-blue-400 flex items-center justify-center font-black text-2xl shadow-xl mb-3">
+                SD3
+            </div>
+            <h1 class="text-2xl font-black text-white tracking-tight">ADMIN SD SALATIGA 03</h1>
+            <p class="text-xs text-slate-400 mt-1">Sistem Manajemen & Verifikasi PPDB Online 2026/2027</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-brandCard border border-brandBorder rounded-3xl p-7 sm:p-8 shadow-2xl backdrop-blur-md">
+            
+            <div class="flex items-center justify-between border-b border-brandBorder/60 pb-3 mb-6">
+                <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-lock text-brandAccent"></i> Autentikasi Admin
+                </span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 font-medium">
+                    Enkripsi Bcrypt
+                </span>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="errorAlert" class="hidden mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-start gap-2.5">
+                <i class="fa-solid fa-circle-exclamation text-red-400 mt-0.5 text-sm shrink-0"></i>
+                <div id="errorMessage">Username atau password tidak valid.</div>
+            </div>
+
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase">
+                        Username / Email
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="username" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brandAccent focus:ring-1 focus:ring-brandAccent" placeholder="Masukkan username" required autocomplete="username">
+                        <i class="fa-regular fa-user absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="text-xs font-semibold text-slate-300 uppercase">
+                            Password
+                        </label>
+                    </div>
+                    <div class="relative">
+                        <input type="password" id="password" class="w-full bg-[#0F1D30] border border-brandBorder rounded-xl pl-10 pr-11 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brandAccent focus:ring-1 focus:ring-brandAccent" placeholder="••••••••" required autocomplete="current-password">
+                        <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                        <button type="button" id="togglePassword" class="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300 text-sm">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="btnLogin" class="w-full py-3.5 px-4 bg-brandAccent hover:bg-brandAccentHover text-white font-bold rounded-xl text-sm transition-all shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i> Masuk ke Dashboard
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="/" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">
+                    &larr; Kembali ke Beranda PPDB
+                </a>
+            </div>
+
+        </div>
+
+        <p class="text-center text-[11px] text-slate-400 mt-6">
+            SD SALATIGA 03 • Dilengkapi Proteksi Brute-Force & Audit Log
+        </p>
+
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const btnLogin = document.getElementById('btnLogin');
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.className = 'fa-regular fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.className = 'fa-regular fa-eye';
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorAlert.classList.add('hidden');
+            btnLogin.disabled = true;
+            btnLogin.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengautentikasi...';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: usernameInput.value.trim(),
+                        password: passwordInput.value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    errorMessage.innerText = data.error || 'Username atau password tidak valid.';
+                    errorAlert.classList.remove('hidden');
+                    btnLogin.disabled = false;
+                    btnLogin.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Masuk ke Dashboard';
+                    return;
+                }
+
+                // Redirect into admin dashboard
+                window.location.href = '/admin';
+            } catch (err) {
+                errorMessage.innerText = 'Terjadi kesalahan sistem saat proses login.';
+                errorAlert.classList.remove('hidden');
+                btnLogin.disabled = false;
+                btnLogin.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Masuk ke Dashboard';
+            }
+        });
+    </script>
+</body>
+</html>

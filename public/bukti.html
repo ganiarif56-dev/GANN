@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bukti Pendaftaran Siswa Baru - SDN SALATIGA 03</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- QRCode JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            background-color: #0B192C;
+            color: #000000;
+        }
+        /* Kop Surat Resmi (Font Arial / Sans Formal) */
+        .kop-surat-title {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: #000000;
+        }
+        .kop-surat-sub {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #000000;
+        }
+        /* Garis Ganda Kop Surat Standar Resmi (Tebal di atas, tipis di bawah) */
+        .kop-border-double {
+            border-bottom: 3.5px solid #000000;
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+        }
+        .kop-border-double::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -6px;
+            height: 1.5px;
+            background-color: #000000;
+        }
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm 15mm;
+            }
+            body {
+                background-color: #FFFFFF !important;
+                color: #000000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-paper {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                border-radius: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-6 px-3 sm:px-6 flex flex-col items-center">
+
+    <!-- Action Bar (Hidden on Print) -->
+    <div class="no-print max-w-3xl w-full mb-6 flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-700/80 rounded-2xl p-4 shadow-xl">
+        <a href="/" class="text-xs font-semibold text-slate-300 hover:text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+        </a>
+        <div class="flex items-center gap-3">
+            <a href="/status.html" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-600 transition-colors">
+                <i class="fa-solid fa-clipboard-check mr-1.5"></i> Cek Status
+            </a>
+            <button onclick="window.print()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2">
+                <i class="fa-solid fa-print"></i> Cetak Bukti Pendaftaran (PDF)
+            </button>
+        </div>
+    </div>
+
+    <!-- Official Printable Paper Container -->
+    <div class="print-paper max-w-3xl w-full bg-white text-black rounded-2xl shadow-2xl p-6 sm:p-10 border border-slate-200" id="printArea">
+        
+        <!-- ========================================================== -->
+        <!-- KOP SURAT RESMI SEKOLAH DASAR NEGERI SALATIGA 03           -->
+        <!-- Sesuai Format Referensi Resmi                              -->
+        <!-- ========================================================== -->
+        <div class="kop-border-double">
+            <div class="flex items-center gap-4 sm:gap-6">
+                <!-- Logo SD Salatiga 03 -->
+                <div class="w-20 h-20 sm:w-24 sm:h-24 shrink-0 flex items-center justify-center">
+                    <img src="/images/logo-sd03.png" alt="Logo SDN Salatiga 03" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='/images/logo-sd03.jpg'">
+                </div>
+
+                <!-- Teks Kop Surat -->
+                <div class="text-center flex-grow pr-2 sm:pr-6">
+                    <h1 class="kop-surat-title text-lg sm:text-[25px] leading-tight uppercase">
+                        SEKOLAH DASAR NEGERI SALATIGA 03
+                    </h1>
+                    <p class="kop-surat-sub text-xs sm:text-[15px] mt-2 font-normal leading-snug">
+                        Jl. Margosari No.3 &nbsp;&#9743;&nbsp; Telp (0298) 322954
+                    </p>
+                    <p class="kop-surat-sub text-xs sm:text-[15px] mt-0.5 font-normal leading-snug">
+                        Surat Elektronik: sdnsalatiga3@gmail.com
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Title -->
+        <div class="text-center mt-6 mb-5">
+            <h2 class="text-base sm:text-lg font-extrabold uppercase tracking-wider text-black underline decoration-2 underline-offset-4">
+                TANDA BUKTI PENDAFTARAN PESERTA DIDIK BARU
+            </h2>
+            <p class="text-xs font-bold text-slate-700 mt-1 uppercase">
+                TAHUN AJARAN 2026/2027
+            </p>
+        </div>
+
+        <!-- Registration Box -->
+        <div class="bg-slate-50 border-2 border-slate-400 rounded-xl p-4 sm:p-5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="text-xs text-slate-600 font-bold uppercase block">Nomor Pendaftaran Resmi:</span>
+                <span class="text-xl sm:text-2xl font-black text-blue-950 tracking-wider font-mono" id="docNoPendaftaran">
+                    PMB-SD03-2026-001
+                </span>
+                <div class="mt-1.5 flex items-center gap-2">
+                    <span class="text-xs text-slate-600 font-semibold">Status Verifikasi:</span>
+                    <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 border border-blue-300" id="docStatus">
+                        Belum Dicek
+                    </span>
+                </div>
+            </div>
+
+            <!-- QR Code (Contains Registration Number ONLY - Data Privacy) -->
+            <div class="flex flex-col items-center">
+                <div id="qrcodeCanvas" class="bg-white p-2 rounded-lg border border-slate-300 shadow-xs"></div>
+                <span class="text-[9px] text-slate-600 mt-1 uppercase font-bold">QR Validasi Berkas</span>
+            </div>
+        </div>
+
+        <!-- Student Data Table -->
+        <div class="border border-slate-400 rounded-xl overflow-hidden mb-5 text-xs sm:text-sm">
+            <div class="bg-slate-100 px-4 py-2 font-bold text-black border-b border-slate-400 uppercase text-xs">
+                I. Data Identitas Calon Peserta Didik
+            </div>
+            <table class="w-full text-left">
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="px-4 py-2 w-2/5 text-slate-700 font-semibold">Nama Lengkap Peserta Didik</td>
+                        <td class="px-4 py-2 font-bold text-black" id="docNama">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">NIK Peserta Didik (Terproteksi)</td>
+                        <td class="px-4 py-2 font-mono text-black font-semibold" id="docNik">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Jenis Kelamin</td>
+                        <td class="px-4 py-2 text-black" id="docJK">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Tempat, Tanggal Lahir</td>
+                        <td class="px-4 py-2 text-black" id="docTTL">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Alamat Tempat Tinggal</td>
+                        <td class="px-4 py-2 text-black" id="docAlamat">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Sekolah Asal (TK / RA / PAUD)</td>
+                        <td class="px-4 py-2 text-black" id="docSekolah">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Status Penerima PIP</td>
+                        <td class="px-4 py-2 font-bold text-black" id="docPIP">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Parent Data Table (Masked for privacy) -->
+        <div class="border border-slate-400 rounded-xl overflow-hidden mb-5 text-xs sm:text-sm">
+            <div class="bg-slate-100 px-4 py-2 font-bold text-black border-b border-slate-400 uppercase text-xs">
+                II. Data Orang Tua / Wali
+            </div>
+            <table class="w-full text-left">
+                <tbody class="divide-y divide-slate-300">
+                    <tr>
+                        <td class="px-4 py-2 w-2/5 text-slate-700 font-semibold">Nama Lengkap Ayah</td>
+                        <td class="px-4 py-2 font-bold text-black" id="docAyah">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Nama Lengkap Ibu</td>
+                        <td class="px-4 py-2 font-bold text-black" id="docIbu">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Nomor HP Orang Tua (Terproteksi)</td>
+                        <td class="px-4 py-2 text-black font-mono font-semibold" id="docHP">-</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2 text-slate-700 font-semibold">Waktu Pendaftaran Online</td>
+                        <td class="px-4 py-2 text-black" id="docTanggal">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Instructions for Verification / Daftar Ulang -->
+        <div class="border border-slate-400 bg-slate-50 rounded-xl p-3.5 mb-6 text-xs text-slate-800 leading-relaxed">
+            <h4 class="font-bold uppercase tracking-wider mb-1 text-black flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info text-blue-900"></i> Petunjuk Verifikasi Berkas Fisik:
+            </h4>
+            <ol class="list-decimal ml-4 space-y-0.5 text-slate-800">
+                <li>Lembar bukti pendaftaran ini dicetak 1 (satu) rangkap dan dibawa ke <strong>SDN Salatiga 03 (Jl. Margosari No.3)</strong> saat verifikasi berkas.</li>
+                <li>Lampirkan fotokopi Akta Kelahiran dan Kartu Keluarga (KK) serta tunjukkan dokumen aslinya kepada panitia.</li>
+                <li>Lampirkan fotokopi KTP Orang Tua/Wali dan pas foto calon peserta didik ukuran 3x4 sebanyak 2 lembar.</li>
+                <li>Pantau status verifikasi secara berkala melalui menu <strong>Cek Status Pendaftaran</strong> di website resmi PPDB.</li>
+            </ol>
+        </div>
+
+        <!-- Signature Area -->
+        <div class="grid grid-cols-2 gap-8 text-center text-xs mt-4 pt-2">
+            <div>
+                <p class="text-slate-700 font-medium">&nbsp;</p>
+                <p class="text-slate-700 font-medium">Orang Tua / Wali Calon Siswa,</p>
+                <div class="h-16"></div>
+                <p class="font-bold text-black border-t border-slate-600 inline-block px-6 pt-1" id="docSignOrangTua">
+                    ( .................................................. )
+                </p>
+            </div>
+            <div>
+                <p class="text-slate-700 font-medium">Salatiga, <span id="docSignDate">2026</span></p>
+                <p class="text-slate-700 font-medium">Panitia PPDB SDN Salatiga 03,</p>
+                <div class="h-16"></div>
+                <p class="font-bold text-black border-t border-slate-600 inline-block px-6 pt-1">
+                    ( Panitia Penerimaan Siswa Baru )
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script to Fetch and Render Proof -->
+    <script>
+        // Get no_pendaftaran from URL path /bukti/:no_pendaftaran or query ?no=...
+        const pathSegments = window.location.pathname.split('/');
+        const lastSegment = pathSegments[pathSegments.length - 1];
+        const urlParams = new URLSearchParams(window.location.search);
+        const noPendaftaran = (lastSegment && lastSegment !== 'bukti.html' && lastSegment !== 'bukti')
+            ? lastSegment
+            : (urlParams.get('no') || 'PMB-SD03-2026-001');
+
+        fetch(`/api/public/bukti/${encodeURIComponent(noPendaftaran)}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Data bukti pendaftaran tidak ditemukan');
+                return res.json();
+            })
+            .then(json => {
+                if (!json.success || !json.data) throw new Error(json.error);
+                const d = json.data;
+
+                document.getElementById('docNoPendaftaran').innerText = d.no_pendaftaran;
+                document.getElementById('docStatus').innerText = d.status_verifikasi || d.status || 'Belum Dicek';
+                document.getElementById('docNama').innerText = d.nama_lengkap;
+                document.getElementById('docNik').innerText = d.nik_masked;
+                document.getElementById('docJK').innerText = d.jenis_kelamin;
+                document.getElementById('docTTL').innerText = d.tempat_tanggal_lahir;
+                document.getElementById('docAlamat').innerText = d.alamat || '-';
+                document.getElementById('docSekolah').innerText = d.sekolah_asal || '-';
+                document.getElementById('docPIP').innerText = d.penerima_pip || 'Tidak';
+                document.getElementById('docAyah').innerText = d.nama_ayah || '-';
+                document.getElementById('docIbu').innerText = d.nama_ibu || '-';
+                document.getElementById('docHP').innerText = d.no_hp_masked || '-';
+                document.getElementById('docTanggal').innerText = d.tanggal_daftar;
+
+                if (d.nama_ayah) {
+                    document.getElementById('docSignOrangTua').innerText = `( ${d.nama_ayah} )`;
+                } else if (d.nama_ibu) {
+                    document.getElementById('docSignOrangTua').innerText = `( ${d.nama_ibu} )`;
+                }
+
+                // Sign date formatted
+                const today = new Date();
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                document.getElementById('docSignDate').innerText = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+
+                // Generate QR Code containing ONLY the official registration number
+                const qrContainer = document.getElementById('qrcodeCanvas');
+                qrContainer.innerHTML = '';
+                new QRCode(qrContainer, {
+                    text: `PPDB-SD03:${d.no_pendaftaran}`,
+                    width: 86,
+                    height: 86,
+                    colorDark: '#000000',
+                    colorLight: '#FFFFFF',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            })
+            .catch(err => {
+                document.getElementById('printArea').innerHTML = `
+                    <div class="text-center py-16">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500 text-4xl mb-3"></i>
+                        <h2 class="text-xl font-bold text-slate-800">Bukti Pendaftaran Tidak Ditemukan</h2>
+                        <p class="text-xs text-slate-500 mt-2">${err.message}</p>
+                        <a href="/status.html" class="inline-block mt-4 px-4 py-2 bg-blue-900 text-white text-xs font-semibold rounded-lg">Cek Status Pendaftaran</a>
+                    </div>
+                `;
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPDB SD Salatiga 03 - Penerimaan Peserta Didik Baru TA 2026/2027</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Theme & Smooth Animation CSS -->
+    <link rel="stylesheet" href="/css/theme-anim.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandNavy: '#0A2540',
+                        brandNavyLight: '#1E3A8A',
+                        brandYellow: '#F59E0B',
+                        brandYellowLight: '#FBBF24',
+                        brandSky: '#E0F2FE',
+                        brandSkyLight: '#F0F9FF',
+                    },
+                    boxShadow: {
+                        'soft': '0 8px 30px rgba(0, 0, 0, 0.06)',
+                        'card': '0 4px 20px rgba(15, 23, 42, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        body {
+            background: linear-gradient(180deg, #F8FAFD 0%, #EFF6FF 50%, #F8FAFD 100%);
+            color: #0F172A;
+            min-height: 100vh;
+        }
+        html.dark-mode body,
+        html.dark body {
+            background: #0B192C !important;
+            color: #F1F5F9 !important;
+        }
+        .hero-banner-shadow {
+            box-shadow: 0 20px 45px -15px rgba(37, 99, 235, 0.15);
+        }
+        @keyframes floatGentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .anim-float-gentle {
+            animation: floatGentle 4.5s ease-in-out infinite;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+    </style>
+</head>
+<body class="selection:bg-amber-400 selection:text-slate-950 transition-colors duration-300">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-[#0B192C]/90 backdrop-blur-md border-b border-blue-100/80 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- School Brand Identity -->
+            <a href="/" class="flex items-center gap-3.5 group shrink-0">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/60 p-1 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform duration-300">
+                    <img src="/images/logo-sd03.png" alt="Logo SD Salatiga 03" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='/images/logo-sd03.jpg'">
+                </div>
+                <div>
+                    <h1 class="font-black text-lg sm:text-xl tracking-tight text-blue-950 dark:text-white leading-tight">
+                        SD SALATIGA 03
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-normal">
+                        Berkarakter, Berprestasi, Berwawasan Global
+                    </p>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-8 text-sm font-semibold">
+                <a href="/" class="text-blue-950 dark:text-amber-400 border-b-2 border-amber-400 pb-1 transition-all">
+                    Beranda
+                </a>
+                <a href="#informasi" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-amber-400 transition-colors">
+                    Informasi
+                </a>
+                <a href="#alur" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-amber-400 transition-colors">
+                    Alur Pendaftaran
+                </a>
+                <a href="#jadwal" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-amber-400 transition-colors">
+                    Jadwal
+                </a>
+                <a href="#kontak" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-amber-400 transition-colors">
+                    Kontak
+                </a>
+            </nav>
+
+            <!-- Right Controls: Theme Toggle, Sound Toggle & Masuk Admin -->
+            <div class="flex items-center space-x-2.5 sm:space-x-3.5">
+                
+                <!-- Light / Dark Mode Toggle Capsule Switch -->
+                <button onclick="toggleTheme()" id="themeToggleBtn" title="Ganti Mode Terang / Gelap" class="relative w-16 h-8 rounded-full bg-slate-800 dark:bg-slate-700 p-1 flex items-center transition-all focus:outline-none shadow-xs border border-slate-700">
+                    <div id="themeToggleThumb" class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-xs shadow-md transition-transform duration-300">
+                        <i class="fa-solid fa-sun text-[11px]"></i>
+                    </div>
+                    <div class="absolute right-2 text-slate-300 text-xs pointer-events-none">
+                        <i class="fa-solid fa-moon text-[11px]"></i>
+                    </div>
+                </button>
+
+                <!-- Interactive Sound Capsule Button -->
+                <button onclick="toggleSound()" class="sound-toggle-btn h-8 px-3 rounded-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all border border-slate-700 focus:outline-none">
+                    <i class="fa-solid fa-volume-high text-white sound-toggle-icon text-xs"></i>
+                    <span class="sound-toggle-text hidden sm:inline">Suara Aktif</span>
+                </button>
+
+                <!-- Masuk Admin Button -->
+                <a href="/admin/login" class="h-8 sm:h-9 px-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 shrink-0">
+                    <i class="fa-solid fa-circle-user text-sm"></i>
+                    <span>Masuk Admin</span>
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" onclick="toggleMobileNav()" class="lg:hidden w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-900 dark:text-white flex items-center justify-center text-sm focus:outline-none">
+                    <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobileNav" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B192C] px-4 pt-3 pb-5 space-y-2 text-sm font-semibold">
+            <a href="/" onclick="toggleMobileNav()" class="block py-2 text-blue-950 dark:text-amber-400 font-bold border-l-4 border-amber-400 pl-3">
+                Beranda
+            </a>
+            <a href="#informasi" onclick="toggleMobileNav()" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 pl-3">
+                Informasi
+            </a>
+            <a href="#alur" onclick="toggleMobileNav()" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 pl-3">
+                Alur Pendaftaran
+            </a>
+            <a href="#jadwal" onclick="toggleMobileNav()" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 pl-3">
+                Jadwal
+            </a>
+            <a href="#kontak" onclick="toggleMobileNav()" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 pl-3">
+                Kontak
+            </a>
+            <a href="/status.html" onclick="toggleMobileNav()" class="block py-2 text-blue-600 dark:text-blue-400 font-bold pl-3">
+                <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Cek Status Pendaftaran
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        
+        <!-- ======================================================== -->
+        <!-- 1. HERO SECTION (Persis Mockup Referensi)               -->
+        <!-- ======================================================== -->
+        <section class="relative pt-8 pb-12 lg:pt-14 lg:pb-16 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                    
+                    <!-- Left Column: Typography & Action Buttons -->
+                    <div class="lg:col-span-6 space-y-6 text-left">
+                        
+                        <!-- Badge: Tahun Ajaran -->
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 font-bold text-xs border border-blue-200/60 dark:border-blue-800">
+                            <i class="fa-solid fa-graduation-cap text-blue-700 dark:text-blue-400"></i>
+                            <span>TAHUN AJARAN 2026/2027</span>
+                        </div>
+
+                        <!-- Main Big Heading -->
+                        <h1 class="text-4xl sm:text-5xl lg:text-[52px] font-black tracking-tight leading-[1.12] text-blue-950 dark:text-white">
+                            Penerimaan<br>
+                            <span class="text-amber-500 font-black">Peserta Didik Baru</span><br>
+                            <span class="text-blue-950 dark:text-slate-100">SD SALATIGA 03</span>
+                        </h1>
+
+                        <!-- School Description -->
+                        <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl">
+                            Bergabunglah bersama kami untuk meraih masa depan yang lebih baik. SD Salatiga 03 berkomitmen memberikan pendidikan berkualitas, berkarakter, dan menyenangkan bagi seluruh peserta didik.
+                        </p>
+
+                        <!-- Call To Action Buttons -->
+                        <div class="flex flex-wrap items-center gap-3.5 sm:gap-4 pt-2">
+                            <!-- Button 1: Daftar Sekarang -->
+                            <a href="/daftar.html" class="inline-flex items-center justify-center px-7 py-3.5 bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold rounded-full shadow-lg shadow-amber-400/30 gap-2.5 transition-all transform hover:-translate-y-0.5 active:scale-95 text-sm sm:text-base">
+                                <i class="fa-regular fa-pen-to-square text-base"></i>
+                                <span>Daftar Sekarang</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+
+                            <!-- Button 2: Cek Informasi Pendaftaran -->
+                            <a href="#informasi" class="inline-flex items-center justify-center px-6 py-3.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border-2 border-blue-600 dark:border-blue-500 font-bold rounded-full shadow-xs gap-2.5 transition-all transform hover:-translate-y-0.5 active:scale-95 text-sm sm:text-base">
+                                <i class="fa-regular fa-file-lines text-blue-600 dark:text-blue-400 text-base"></i>
+                                <span>Cek Informasi Pendaftaran</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Visual Mockup Illustration Image -->
+                    <div class="lg:col-span-6">
+                        <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-700 bg-blue-50 dark:bg-slate-800 anim-float-gentle">
+                            <img src="/images/hero-anak-sekolah.png?v=hd" alt="Siswa SD Salatiga 03 Ceria" class="w-full h-auto object-cover rounded-2xl block" onerror="this.onerror=null; this.src='/images/gedung-sekolah.png'">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 2. BAGIAN KEUNGGULAN LAYANAN SEKOLAH (Feature Strip)     -->
+        <!-- ======================================================== -->
+        <section class="py-4 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-blue-100 dark:border-slate-700 shadow-xs">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 items-center">
+                        
+                        <!-- Feature 1 -->
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-shield-check"></i>
+                            </div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                                Pendaftaran Mudah & Aman
+                            </span>
+                        </div>
+
+                        <!-- Feature 2 -->
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-file-shield"></i>
+                            </div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                                Data Tersimpan dengan Baik
+                            </span>
+                        </div>
+
+                        <!-- Feature 3 -->
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                                Dipantau oleh Tim Sekolah
+                            </span>
+                        </div>
+
+                        <!-- Feature 4 -->
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-desktop"></i>
+                            </div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                                Informasi Transparan & Akurat
+                            </span>
+                        </div>
+
+                        <!-- Feature 5 -->
+                        <div class="col-span-2 sm:col-span-1 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-heart"></i>
+                            </div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                                Pelayanan Ramah & Profesional
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 4. ALUR PENDAFTARAN & JADWAL PENTING (Grid 2 Kolom)      -->
+        <!-- ======================================================== -->
+        <section id="alur" class="py-6 pb-14">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+                    
+                    <!-- Left Card: Alur Pendaftaran (4 Langkah) -->
+                    <div class="lg:col-span-7 bg-[#EDF6FF] dark:bg-slate-800/90 rounded-3xl p-6 sm:p-7 border border-blue-200/70 dark:border-slate-700 shadow-sm">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-5 h-2 rounded-full bg-amber-500 inline-block"></span>
+                                <h3 class="text-lg sm:text-xl font-black text-blue-950 dark:text-white">
+                                    Alur Pendaftaran
+                                </h3>
+                            </div>
+                            <a href="#panduan-alur" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 flex items-center gap-1 transition-colors">
+                                <span>Lihat Selengkapnya</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+
+                        <!-- 4 Steps in Horizontal / Responsive Flow -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-2 items-start relative">
+                            
+                            <!-- Step 1 -->
+                            <div class="flex flex-col items-center text-center group">
+                                <div class="w-7 h-7 rounded-full bg-blue-200/80 dark:bg-blue-900/80 text-blue-800 dark:text-blue-300 font-extrabold text-xs flex items-center justify-center mb-2.5 shadow-2xs">
+                                    1
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 border border-blue-100 dark:border-slate-600 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg shadow-xs mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-regular fa-file-lines"></i>
+                                </div>
+                                <h4 class="font-bold text-xs sm:text-[13px] text-slate-800 dark:text-slate-100 leading-tight">
+                                    Isi Formulir Pendaftaran
+                                </h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                    secara online
+                                </p>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div class="flex flex-col items-center text-center group">
+                                <div class="w-7 h-7 rounded-full bg-blue-200/80 dark:bg-blue-900/80 text-blue-800 dark:text-blue-300 font-extrabold text-xs flex items-center justify-center mb-2.5 shadow-2xs">
+                                    2
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 border border-blue-100 dark:border-slate-600 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg shadow-xs mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <h4 class="font-bold text-xs sm:text-[13px] text-slate-800 dark:text-slate-100 leading-tight">
+                                    Lengkapi Data Diri
+                                </h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                    dan Orang Tua
+                                </p>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div class="flex flex-col items-center text-center group">
+                                <div class="w-7 h-7 rounded-full bg-blue-200/80 dark:bg-blue-900/80 text-blue-800 dark:text-blue-300 font-extrabold text-xs flex items-center justify-center mb-2.5 shadow-2xs">
+                                    3
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 border border-blue-100 dark:border-slate-600 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg shadow-xs mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </div>
+                                <h4 class="font-bold text-xs sm:text-[13px] text-slate-800 dark:text-slate-100 leading-tight">
+                                    Kirim Pendaftaran
+                                </h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                    dan simpan bukti
+                                </p>
+                            </div>
+
+                            <!-- Step 4 -->
+                            <div class="flex flex-col items-center text-center group">
+                                <div class="w-7 h-7 rounded-full bg-blue-200/80 dark:bg-blue-900/80 text-blue-800 dark:text-blue-300 font-extrabold text-xs flex items-center justify-center mb-2.5 shadow-2xs">
+                                    4
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 border border-blue-100 dark:border-slate-600 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg shadow-xs mb-2 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <h4 class="font-bold text-xs sm:text-[13px] text-slate-800 dark:text-slate-100 leading-tight">
+                                    Cek Status Pendaftaran
+                                </h4>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                    secara berkala
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Right Card: Jadwal Penting (Timeline) -->
+                    <div id="jadwal" class="lg:col-span-5 bg-[#FFF9ED] dark:bg-slate-800/90 rounded-3xl p-6 sm:p-7 border border-amber-200/70 dark:border-slate-700 shadow-sm">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/70 text-amber-700 dark:text-amber-400 flex items-center justify-center text-sm shadow-xs">
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                </div>
+                                <h3 class="text-lg sm:text-xl font-black text-blue-950 dark:text-white">
+                                    Jadwal Penting
+                                </h3>
+                            </div>
+                            <a href="#jadwal-lengkap" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 flex items-center gap-1 transition-colors">
+                                <span>Lihat Semua</span>
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+
+                        <!-- Timeline List -->
+                        <div class="space-y-3.5" id="jadwalTimelineContainer">
+                            
+                            <!-- Timeline Item 1 -->
+                            <div class="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-700/60 border border-amber-100 dark:border-slate-600/50">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></span>
+                                    <div>
+                                        <div class="text-[11px] font-bold text-slate-400 dark:text-slate-400">01 Juli – 31 Agustus 2026</div>
+                                        <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">Pendaftaran Online</div>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 text-[10px] sm:text-[11px] font-bold shrink-0">
+                                    Sedang Berlangsung
+                                </span>
+                            </div>
+
+                            <!-- Timeline Item 2 -->
+                            <div class="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-700/60 border border-amber-100 dark:border-slate-600/50">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                                    <div>
+                                        <div class="text-[11px] font-bold text-slate-400 dark:text-slate-400">01 – 10 September 2026</div>
+                                        <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">Verifikasi Data</div>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 text-[10px] sm:text-[11px] font-bold shrink-0">
+                                    Akan Datang
+                                </span>
+                            </div>
+
+                            <!-- Timeline Item 3 -->
+                            <div class="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-700/60 border border-amber-100 dark:border-slate-600/50">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                                    <div>
+                                        <div class="text-[11px] font-bold text-slate-400 dark:text-slate-400">15 September 2026</div>
+                                        <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">Pengumuman Hasil Seleksi</div>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 text-[10px] sm:text-[11px] font-bold shrink-0">
+                                    Akan Datang
+                                </span>
+                            </div>
+
+                            <!-- Timeline Item 4 -->
+                            <div class="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-700/60 border border-amber-100 dark:border-slate-600/50">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                                    <div>
+                                        <div class="text-[11px] font-bold text-slate-400 dark:text-slate-400">20 – 25 September 2026</div>
+                                        <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">Daftar Ulang</div>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 text-[10px] sm:text-[11px] font-bold shrink-0">
+                                    Akan Datang
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 5. FOTO KAMPUS & FASILITAS SEKOLAH                       -->
+        <!-- ======================================================== -->
+        <section class="py-10 bg-white/60 dark:bg-slate-900/60 border-t border-b border-blue-100/70 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <div class="lg:col-span-6 rounded-3xl overflow-hidden shadow-xl border-4 border-white dark:border-slate-700">
+                        <img src="/images/gedung-sekolah.png" alt="Gedung SD Salatiga 03 Asri dan Teduh" class="w-full h-[320px] object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+
+                    <div class="lg:col-span-6 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs">
+                            <i class="fa-solid fa-leaf"></i>
+                            <span>Lingkungan Ramah Anak & Asri</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-blue-950 dark:text-white">
+                            Gedung & Fasilitas SD Salatiga 03
+                        </h2>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Terletak di lingkungan yang asri, sejuk, dan terlindungi pepohonan rindang di Kota Salatiga. SD Salatiga 03 menyediakan ruang kelas representatif, perpustakaan ramah baca anak, lapangan olahraga serbaguna, dan sanitasi bersih untuk kenyamanan belajar peserta didik.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3 pt-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i> Kelas Berbasis Interaktif
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i> Perpustakaan & Pojok Baca
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i> Lapangan Upacara & Olahraga
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i> Akses Ramah & Zona Aman
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 6. INFORMASI & PERSYARATAN LENGKAP (#informasi)          -->
+        <!-- ======================================================== -->
+        <section id="informasi" class="py-14 sm:py-18">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-amber-500 text-xs font-black uppercase tracking-wider">Petunjuk Resmi</span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-blue-950 dark:text-white mt-1">
+                        Persyaratan Calon Peserta Didik
+                    </h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">
+                        Siapkan dokumen kependudukan sebelum mengisi formulir pendaftaran online.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Syarat 1 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-card border border-blue-100/80 dark:border-slate-700 hover:-translate-y-1 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center text-xl mb-4 font-bold">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-blue-950 dark:text-white mb-2">Ketentuan Usia</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Calon peserta didik berusia 7 (tujuh) tahun atau paling rendah 6 (enam) tahun pada tanggal 1 Juli 2026. Prioritas utama diberikan bagi anak berusia 7 tahun ke atas.
+                        </p>
+                    </div>
+
+                    <!-- Syarat 2 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-card border border-blue-100/80 dark:border-slate-700 hover:-translate-y-1 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-xl mb-4 font-bold">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-blue-950 dark:text-white mb-2">Dokumen Kependudukan</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Memiliki Nomor Induk Kependudukan (NIK 16 digit), Kartu Keluarga (KK) orang tua/wali, Akta Kelahiran resmi, serta KTP elektronik orang tua.
+                        </p>
+                    </div>
+
+                    <!-- Syarat 3 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-card border border-blue-100/80 dark:border-slate-700 hover:-translate-y-1 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-xl mb-4 font-bold">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-blue-950 dark:text-white mb-2">Afirmasi & PIP</h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Bagi keluarga pemegang Kartu Indonesia Pintar (KIP) atau penerima Program Indonesia Pintar (PIP), sistem menyediakan penanda khusus untuk pendataan afirmasi.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Call to action card inside info -->
+                <div class="mt-10 bg-gradient-to-r from-blue-900 to-indigo-950 rounded-3xl p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+                    <div>
+                        <h4 class="text-xl sm:text-2xl font-black">Siap Mendaftarkan Putra-Putri Anda?</h4>
+                        <p class="text-blue-200 text-xs sm:text-sm mt-1">Formulir pendaftaran dapat diisi 24 jam gratis tanpa dipungut biaya apapun.</p>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <a href="/daftar.html" class="px-6 py-3.5 bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold rounded-full shadow-lg transition-transform hover:scale-105 text-sm">
+                            <i class="fa-solid fa-file-signature mr-1.5"></i> Mulai Pendaftaran
+                        </a>
+                        <a href="/status.html" class="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full border border-white/20 transition-colors text-sm">
+                            <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Cek Status
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- 7. SEKRETARIAT & KONTAK SEKOLAH (#kontak)                -->
+        <!-- ======================================================== -->
+        <section id="kontak" class="py-12 bg-white/70 dark:bg-slate-900/70 border-t border-blue-100/70 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <span class="text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-wider">Layanan Informasi</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-blue-950 dark:text-white mt-1">
+                        Sekretariat PPDB SD Salatiga 03
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700 text-center shadow-xs">
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center text-lg mb-3">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-blue-950 dark:text-white">Alamat Sekolah</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="contactAlamat">
+                            Jl. Margosari No.3, Salatiga
+                        </p>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700 text-center shadow-xs">
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-lg mb-3">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-blue-950 dark:text-white">WhatsApp Panitia</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="contactWa">0812-3456-7890</p>
+                        <a href="https://wa.me/6281234567890" target="_blank" class="inline-block mt-2 text-xs font-bold text-emerald-600 hover:underline">
+                            Chat Panitia PPDB &rarr;
+                        </a>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700 text-center shadow-xs">
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-lg mb-3">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-blue-950 dark:text-white">Telepon Kantor</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="contactTelp">(0298) 322954</p>
+                        <p class="text-[11px] text-slate-400 mt-1">Senin - Jumat: 08.00 - 13.00 WIB</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-blue-100 dark:border-slate-700 text-center shadow-xs">
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-lg mb-3">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-blue-950 dark:text-white">Surat Elektronik</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="contactEmail">sdnsalatiga3@gmail.com</p>
+                        <a href="mailto:sdnsalatiga3@gmail.com" class="inline-block mt-2 text-xs font-bold text-purple-600 hover:underline">
+                            Kirim Email &rarr;
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-[#0B192C] border-t border-blue-100 dark:border-slate-800 py-8 text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <img src="/images/logo-sd03.png" alt="Logo" class="w-7 h-7 object-contain">
+                <div>
+                    <span class="font-black text-blue-950 dark:text-white text-sm">SD SALATIGA 03</span>
+                    <span class="mx-2">•</span>
+                    <span>Penerimaan Peserta Didik Baru TA 2026/2027</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 font-semibold">
+                <a href="/daftar.html" class="hover:text-blue-600 dark:hover:text-white transition-colors">Formulir</a>
+                <a href="/status.html" class="hover:text-blue-600 dark:hover:text-white transition-colors">Cek Status</a>
+                <a href="/admin/login" class="hover:text-blue-600 dark:hover:text-white transition-colors">Portal Admin</a>
+            </div>
+            <p>
+                &copy; 2026 SD SALATIGA 03. Seluruh Hak Cipta Dilindungi.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script src="/js/audio-theme.js"></script>
+    <script>
+        // Toggle Mobile Nav
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobileNav');
+            const icon = document.getElementById('mobileMenuIcon');
+            if (nav) {
+                nav.classList.toggle('hidden');
+                if (nav.classList.contains('hidden')) {
+                    icon.className = 'fa-solid fa-bars';
+                } else {
+                    icon.className = 'fa-solid fa-xmark';
+                }
+            }
+        }
+
+        // Render Jadwal Penting Timeline Dynamically
+        function renderJadwalPenting(jadwalList) {
+            const container = document.getElementById('jadwalTimelineContainer');
+            if (!container || !Array.isArray(jadwalList) || jadwalList.length === 0) return;
+
+            container.innerHTML = jadwalList.map((item) => {
+                const status = item.status || 'Akan Datang';
+                let badgeClass = 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400';
+                let dotClass = 'bg-amber-400';
+
+                if (status === 'Sedang Berlangsung') {
+                    badgeClass = 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400';
+                    dotClass = 'bg-blue-600';
+                } else if (status === 'Selesai') {
+                    badgeClass = 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+                    dotClass = 'bg-emerald-500';
+                }
+
+                return `
+                    <div class="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/70 dark:bg-slate-700/60 border border-amber-100 dark:border-slate-600/50">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 rounded-full ${dotClass} shrink-0"></span>
+                            <div>
+                                <div class="text-[11px] font-bold text-slate-400 dark:text-slate-400">${item.tanggal || '-'}</div>
+                                <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white">${item.tahap || '-'}</div>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full ${badgeClass} text-[10px] sm:text-[11px] font-bold shrink-0">
+                            ${status}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Fetch School Contact Settings & Jadwal Penting
+        async function loadSchoolSettings() {
+            try {
+                const res = await fetch('/api/public/settings');
+                const result = await res.json();
+                if (result.success && result.data) {
+                    const s = result.data;
+                    if (s.alamat) document.getElementById('contactAlamat').innerText = s.alamat;
+                    if (s.telepon) document.getElementById('contactTelp').innerText = s.telepon;
+                    if (s.whatsapp) document.getElementById('contactWa').innerText = s.whatsapp;
+                    if (s.email) document.getElementById('contactEmail').innerText = s.email;
+                    if (s.jadwal_penting && Array.isArray(s.jadwal_penting)) {
+                        renderJadwalPenting(s.jadwal_penting);
+                    }
+                }
+            } catch (e) {
+                // Default settings in place
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchoolSettings();
+        });
+    </script>
+</body>
+</html>
